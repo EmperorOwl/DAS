@@ -37,10 +37,10 @@ def parse(expr: str) -> sp_obj:
                                               evaluate=False)
 
 
-def split(func: str) -> (str, sp_obj):
+def split(func: str, var: str) -> (str, sp_obj):
     """ Converts only the expression part of the function. """
     try:
         name, expr = func.split('=')
     except ValueError:
-        name, expr = 'f(x)', func
+        name, expr = f'f({var})', func
     return name, parse(expr)

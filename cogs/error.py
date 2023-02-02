@@ -8,6 +8,7 @@ from discord.ext import commands
 
 from modules.bot import DAS
 from modules.buttons import Buttons, Delete
+from modules.transform import CTR
 
 
 class Error(commands.Cog):
@@ -43,11 +44,8 @@ class Error(commands.Cog):
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
         # Send error message to log channel.
         log_channel = self.bot.get_channel(int(self.bot['log_channel']))
-        if 'graph' in itx.command.qualified_name:
-            data = itx.data['options'][0]['options'][0]['options']
-        else:
-            data = itx.data['options']
-        kwargs = " ".join(f"{arg['name']}: {arg['value']}" for arg in data)
+        kwargs = " ".join(f"{name}: {value}" for name, value in
+                          list(DAS.get_original_inputs(itx).items()))
         await log_channel.send(
             embed=discord.Embed(
                 title='Error Logged',
@@ -102,11 +100,16 @@ class Error(commands.Cog):
                 await self._handle_uncaught(itx, error)
         # Handle errors that occur when trying to transform an argument.
         elif isinstance(error, app_commands.TransformerError):
+            # Check if error should be updated to original one.
+            if isinstance(error.__cause__, CTR):
+                error = error.__cause__
             await itx.response.send_message(
                 embed=discord.Embed(
                     title='☹️ Uh oh! Something not right!',
-                    description=f"Your input has led to a `TransformerError`.\n"
-                                f"```{error}```"
+                    description=(
+                        f"Your input has led to a `TransformerError`.\n"
+                        f"```{error}```"
+                    )
                 )
             )
         # Handle errors that occur when command takes too long.

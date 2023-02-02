@@ -22,21 +22,23 @@ async def _delete(msg: discord.Message) -> None:
 class Single(discord.ui.Button):
     """ Represents a graph button which plots a single function. """
 
-    def __init__(self, function: transform.Function) -> None:
+    def __init__(self, function: transform.Function, variable: str) -> None:
         """ Creates a button. """
         super().__init__(emoji='📈', style=discord.ButtonStyle.primary)
-        self.function = function
-        self.domain = transform.DEFAULT_LIMIT
-        self.range = transform.DEFAULT_LIMIT
+        self.func = function
+        self.var = variable
+        self.dom = transform.DEFAULT_LIMIT
+        self.ran = transform.DEFAULT_LIMIT
 
     async def callback(self, itx: discord.Interaction) -> None:
         """ Handles a button press. """
         await self.view.msg.edit(view=self.view.clear_items())
-        plotter.plot_single_function(self.function, self.domain, self.range)
+        plotter.plot_single_function(self.func, self.var, self.dom, self.ran)
         await answer.send(
             itx,
-            inputs=f"Function: `{self.function}`\n"
-                   f"Limits: `x∈{self.domain}`, `y∈{self.range}`",
+            inputs=f"Function: `{self.func}`\n"
+                   f"Limits: `{self.var} ∈ {self.dom}`, "
+                   f"`{self.func.name} ∈ {self.ran}`",
             cmd_name='graph single function'
         )
         self.view.stop()
@@ -46,23 +48,26 @@ class Multiple(discord.ui.Button):
     """ Represents a graph button which plots two functions. """
 
     def __init__(self,
-                 func1: transform.Function,
-                 func2: transform.Function) -> None:
+                 f1: transform.Function,
+                 f2: transform.Function,
+                 var: str) -> None:
         """ Creates a button. """
         super().__init__(emoji='📈', style=discord.ButtonStyle.primary)
-        self.f1 = func1
-        self.f2 = func2
+        self.f1 = f1
+        self.f2 = f2
+        self.var = var
         self.dom = transform.DEFAULT_LIMIT
         self.ran = transform.DEFAULT_LIMIT
 
     async def callback(self, itx: discord.Interaction) -> None:
         """ Handles a button press. """
         await self.view.msg.edit(view=self.view.clear_items())
-        plotter.plot_multiple_functions(self.f1, self.f2, self.dom, self.ran)
+        plotter.plot_multiple_functions(self.f1, self.f2, self.var, self.dom, self.ran)
         await answer.send(
             itx,
             inputs=f"Functions: `{self.f1}`, `{self.f2}`\n"
-                   f"Limits: `x∈{self.dom}`, `y∈{self.ran}`",
+                   f"Limits: `{self.var} ∈ {self.dom}`, "
+                   f"`{self.f1.name},{self.f2.name} ∈ {self.ran}`",
             cmd_name='graph multiple functions'
         )
         self.view.stop()

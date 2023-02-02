@@ -24,22 +24,24 @@ class Graph(commands.GroupCog, group_name='graph'):
     @single.command()
     async def function(self,
                        itx: discord.Interaction,
-                       function: transform.Function,
-                       domain: transform.Limit = DEFAULT_LIMIT,
-                       range: transform.Limit = None) -> None:
+                       func: transform.Function,
+                       var: app_commands.Range[str, 1, 1],
+                       dom: transform.Limit = DEFAULT_LIMIT,
+                       ran: transform.Limit = None) -> None:
         """ Plots a function.
 
         :param itx: the Discord interaction
-        :param function: the function to use, e.g. f(x)=x^3
-        :param domain: the domain to use, e.g. (-5, 5)
-        :param range: the range to use, e.g. (-5, 5)
+        :param func: the function to use, e.g. f(x)=x^3
+        :param var: the variable to use, e.g. x
+        :param dom: the domain to use, e.g. (-5, 5)
+        :param ran: the range to use, e.g. (-5, 5)
         """
-        plotter.plot_single_function(function, domain, range)
+        plotter.plot_single_function(func, var, dom, ran)
         await answer.send(
             itx,
-            inputs=f"Function: `{function}`\n" +
-                   (f"Limits: `x∈{domain}`, `y∈{range}`" if range else
-                    f"Domain: `x∈{domain}`")
+            inputs=f"Function: `{func}`\n" +
+                   (f"Limits: `{var} ∈ {dom}`, `{func.name} ∈ {ran}`"
+                    if ran else f"Domain: `{var} ∈ {dom}`")
         )
 
     @single.command()
@@ -59,7 +61,7 @@ class Graph(commands.GroupCog, group_name='graph'):
         await answer.send(
             itx,
             inputs=f"Relation: `{relation}`\n"
-                   f"Limits: `x∈{domain}`, `y∈{range}`"
+                   f"Limits: `x ∈ {domain}`, `y ∈ {range}`"
         )
 
     @single.command(name='3d')
@@ -79,7 +81,7 @@ class Graph(commands.GroupCog, group_name='graph'):
         await answer.send(
             itx,
             inputs=f"Expression: `{expression}`\n"
-                   f"Limits: `x∈{domain}`, `y∈{range}`"
+                   f"Limits: `x ∈ {domain}`, `y ∈ {range}`"
         )
 
     multiple = app_commands.Group(name='multiple',
@@ -88,24 +90,26 @@ class Graph(commands.GroupCog, group_name='graph'):
     @multiple.command()
     async def functions(self,
                         itx: discord.Interaction,
-                        func1: transform.Function,
-                        func2: transform.Function,
+                        f1: transform.Function,
+                        f2: transform.Function,
+                        var: app_commands.Range[str, 1, 1],
                         dom: transform.Limit = DEFAULT_LIMIT,
                         ran: transform.Limit = None) -> None:
         """ Plots two functions.
 
         :param itx: the Discord interaction
-        :param func1: the first function to use, e.g. f(x)=e^x
-        :param func2: the second function to use, e.g. f^{-1}(x)=ln(x)
+        :param f1: the first function to use, e.g. f(x)=e^x
+        :param f2: the second function to use, e.g. f^{-1}(x)=ln(x)
+        :param var: the variable to use, e.g. x
         :param dom: the domain to use, e.g. (-5, 5)
         :param ran: the range to use, e.g. (-5, 5)
         """
-        plotter.plot_multiple_functions(func1, func2, dom, ran)
+        plotter.plot_multiple_functions(f1, f2, var, dom, ran)
         await answer.send(
             itx,
-            inputs=f"Functions: `{func1}`, `{func2}`\n" +
-                   (f"Limits: `x∈{dom}`, `y∈{ran}`" if ran else
-                    f"Domain: `x∈{dom}`")
+            inputs=f"Functions: `{f1}`, `{f2}`\n" +
+                   (f"Limits: `{var} ∈ {dom}`, `{f1.name},{f2.name} ∈ {ran}`"
+                    if ran else f"Domain: `{var} ∈ {dom}`")
         )
 
     @multiple.command()
@@ -127,7 +131,7 @@ class Graph(commands.GroupCog, group_name='graph'):
         await answer.send(
             itx,
             inputs=f"Relations: `{rel1}`, `{rel2}`\n"
-                   f"Limits: `x∈{dom}`, `y∈{ran}`"
+                   f"Limits: `x ∈ {dom}`, `y ∈ {ran}`"
         )
 
     @multiple.command(name='3d')
@@ -149,7 +153,7 @@ class Graph(commands.GroupCog, group_name='graph'):
         await answer.send(
             itx,
             inputs=f"Expressions: `{expr1}`, `{expr2}`\n"
-                   f"Limits: `x∈{dom}`, `y∈{ran}`"
+                   f"Limits: `x ∈ {dom}`, `y ∈ {ran}`"
         )
 
     parametric = app_commands.Group(name='parametric',

@@ -22,17 +22,19 @@ class Maths(commands.Cog):
     @app_commands.command()
     async def display(self,
                       itx: discord.Interaction,
-                      function: transform.Function) -> None:
+                      function: transform.Function,
+                      variable: app_commands.Range[str, 1, 1]) -> None:
         """ Displays a function.
 
         :param itx: the Discord interaction
+        :param variable: the variable to use, e.g. x
         :param function: the function to use, e.g. f(x)=x^3
         """
         calculator.display(function)
         await answer.send(
             itx,
             inputs=f"Function: `{function}`",
-            btns=[Single(function), Delete(), Confirm()]
+            btns=[Single(function, variable), Delete(), Confirm()]
         )
 
     @app_commands.command()
@@ -53,7 +55,7 @@ class Maths(commands.Cog):
             itx,
             inputs=f"Function: `{function}`\n"
                    f"Limit: `{value}`",
-            btns=[Single(function), Delete(), Confirm()]
+            btns=[Single(function, variable), Delete(), Confirm()]
         )
 
     @app_commands.command()
@@ -68,18 +70,18 @@ class Maths(commands.Cog):
         :param variable: the variable to use, e.g. x
         """
         original = transform.Function(
-            name="f(x)",
+            name=f"f({variable})",
             expr=function.expr
         )
         derivative = transform.Function(
-            name="f'(x)",
+            name=f"f'({variable})",
             expr=calculator.derive(function, variable)
         )
         await answer.send(
             itx,
             inputs=f"Function: `{original}`\n"
                    f"Derivative: `{derivative}`",
-            btns=[Multiple(original, derivative), Delete(), Confirm()]
+            btns=[Multiple(original, derivative, variable), Delete(), Confirm()]
         )
 
     @app_commands.command()
@@ -97,14 +99,14 @@ class Maths(commands.Cog):
         :param lt: the lower terminal, e.g. 1
         :param ut: the upper terminal, e.g. 5
         """
-        original = transform.Function(name="f(x)", expr=func.expr)
+        original = transform.Function(name=f"f({var})", expr=func.expr)
         indefinite, definite = calculator.integrate(func, var, lt, ut)
-        integral = transform.Function(name="F(x)", expr=indefinite)
+        integral = transform.Function(name=f"F({var})", expr=indefinite)
         await answer.send(
             itx,
             inputs=f"Function: `{original}`\n"
                    f"Integral: `{integral}`",
-            btns=[Multiple(original, integral), Delete(), Confirm()]
+            btns=[Multiple(original, integral, var), Delete(), Confirm()]
         )
 
     @app_commands.command()

@@ -8,6 +8,12 @@ import discord
 
 from backend import parser
 from backend.parser import sp_obj
+from modules.bot import DAS
+
+
+class CTR(Exception):
+    """ Represents a Custom Transformer Error. """
+    pass  # Used to change the error message in the error handler.
 
 
 class Limit(typing.NamedTuple):
@@ -52,11 +58,19 @@ class Function(typing.NamedTuple):
     expr: sp_obj
 
     @classmethod
-    async def transform(cls, _, val: str) -> Function:
+    async def transform(cls, itx: discord.Interaction, val: str) -> Function:
         """ Returns the transformed function. """
-        if 'y' in val or ('x' not in val and 't' not in val):
-            raise Exception("Not A Function")
-        name, expr = parser.split(val)
+        kwargs = DAS.get_original_inputs(itx)
+        if itx.command.qualified_name == 'graph parametric equations':
+            variable = 't'
+        else:
+            variable = kwargs.get('variable', kwargs.get('var'))
+        # Attempt to parse the value entered,
+        name, expr = parser.split(func=val, var=variable)
+        # Check that variable is in function.
+        if variable not in str(expr) and not str(expr).isnumeric():
+            raise CTR("Failed to find Variable in Function")
+        # Finally, return the Function object.
         return cls(name, expr)
 
     def __str__(self) -> str:
@@ -71,7 +85,7 @@ class Relation(typing.Generic[sp_obj]):
     async def transform(cls, _, val: str) -> Relation:
         """ Returns the parsed expression. """
         if 'x' not in val and 'y' not in val:
-            raise Exception("Not An Relation")
+            raise CTR("Failed to find x or y in Relation")
         return parser.parse(val)
 
 
@@ -82,7 +96,7 @@ class Expression(typing.Generic[sp_obj]):
     async def transform(cls, itx: discord.Interaction, val: str) -> Expression:
         """ Returns the parsed expression. """
         if itx.command.name != 'calculate' and '=' in val:
-            raise Exception("Not An Expression")
+            raise CTR("Expression cannot contain equal signs")
         return parser.parse(val)
 
 

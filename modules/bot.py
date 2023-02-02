@@ -83,6 +83,15 @@ class DAS(commands.Bot):
             group, guild=self.test_guild
         ).get_command(subgroup).get_command(name)
 
+    @staticmethod
+    def get_original_inputs(itx: discord.Interaction) -> dict:
+        """ Returns the original inputs of an application command. """
+        if 'graph' in itx.command.qualified_name:
+            data = itx.data['options'][0]['options'][0]['options']
+        else:
+            data = itx.data['options']
+        return {arg['name']: arg['value'] for arg in data}
+
     def __getitem__(self, key: str) -> str:
         """ Returns information about the bot depending on a key.  """
         with open(DAS.CONFIG_FILE, 'r') as f:
