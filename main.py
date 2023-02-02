@@ -3,4 +3,4 @@
 from modules.bot import DAS
 
 bot = DAS()
-bot.run(token=bot['token'])
+bot.run(token=bot['token'], reconnect=True)

@@ -7,7 +7,7 @@ from discord.ext import commands
 from datetime import datetime
 
 
-class DAS(commands.Bot):
+class DAS(commands.AutoShardedBot):
     """ Represents the bot DAS.
 
     constants:
