@@ -1,4 +1,10 @@
-""" Code for defining the bot. """
+""" Code for defining the bot.
+
+References:
+    https://docs.top.gg/libraries/python/
+    https://topggpy.readthedocs.io/en/stable/api.html
+
+"""
 
 import json
 import topgg
@@ -53,7 +59,9 @@ class DAS(commands.AutoShardedBot):
         self.topggpy = topgg.DBLClient(
             bot=self,
             token=self['topgg'],
-            autopost=False if self.test_guild else True  # Don't post for dev bot.
+            # Don't post guild and shard counts on development bot.
+            autopost=False if self.test_guild else True,
+            post_shard_count=False if self.test_guild else True
         )
 
     async def on_ready(self) -> None:
@@ -64,6 +72,7 @@ class DAS(commands.AutoShardedBot):
     async def on_autopost_success(self) -> None:
         """ Prints a message to indicate bot has posted guild count. """
         print(f"Posted server count {self.topggpy.guild_count} guilds.")
+        print(f"Posted shard count {self.shard_count} shards.")
 
     def get_number_of_users(self) -> int:
         """ Returns the number of users the bot can see. """

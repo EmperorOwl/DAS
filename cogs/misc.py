@@ -70,6 +70,7 @@ class Misc(commands.Cog):
                         f"`      Developer:` {self.bot['developer']}\n"
                         f"`        Servers:` {len(self.bot.guilds)}\n"
                         f"`          Users:` {self.bot.get_number_of_users()}\n"
+                        f"`         Shards:` {self.bot.shard_count}\n"
                         f"`         Memory:` {psutil.virtual_memory().percent} %\n"
                         f"`      CPU Usage:` {psutil.cpu_percent(interval=1)} %\n"
                         f"`        Latency:` {int(self.bot.latency * 1000)} ms\n"
