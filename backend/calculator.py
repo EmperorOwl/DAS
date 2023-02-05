@@ -36,7 +36,7 @@ def integrate(func: sp_obj,
               ut: int = None) -> (sp_obj, sp_obj):
     """ Integrates a function with respect to a variable. """
     var = sp.Symbol(var)
-    indefinite = sp.integrate(func.expr, var)
+    indefinite = sp.expand(sp.simplify(sp.integrate(func.expr, var)))
     if lt and ut:  # If terminals, then evaluate for the definite integral.
         definite = sp.integrate(func.expr, (var, lt, ut))
         renderer.render(f"$\\int_{{{lt}}}^{{{ut}}} \\ "
