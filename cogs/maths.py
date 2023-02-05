@@ -42,7 +42,7 @@ class Maths(commands.Cog):
                     itx: discord.Interaction,
                     function: transform.Function,
                     variable: app_commands.Range[str, 1, 1],
-                    coordinate: str) -> None:
+                    coordinate: transform.Value) -> None:
         """ Finds the limit of a function at a coordinate.
 
         :param itx: the Discord interaction
@@ -89,8 +89,8 @@ class Maths(commands.Cog):
                         itx: discord.Interaction,
                         func: transform.Function,
                         var: app_commands.Range[str, 1, 1],
-                        lt: app_commands.Range[int, -999, 999] = None,
-                        ut: app_commands.Range[int, -999, 999] = None) -> None:
+                        lt: transform.Value = None,
+                        ut: transform.Value = None) -> None:
         """ Integrates a function with respect to a variable.
 
         :param itx: the Discord interaction

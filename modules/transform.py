@@ -107,3 +107,15 @@ class Equation(typing.Generic[sp_obj]):
     async def transform(cls, _, val: str) -> Equation:
         """ Returns the parsed expression. """
         return parser.parse(val)
+
+
+class Value(typing.Generic[sp_obj]):
+    """ Represents a value. """
+
+    @classmethod
+    async def transform(cls, _, val: str) -> Value:
+        """ Returns the parsed expression. """
+        for char in ['=', '<', '>']:
+            if char in val:
+                raise CTR("Value cannot contain relational operators")
+        return parser.parse(val)

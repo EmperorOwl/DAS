@@ -11,12 +11,11 @@ def display(func: sp_obj) -> None:
     renderer.render(f'${func.name}={sp.latex(func.expr)}$')
 
 
-def limit(func: sp_obj, var: str, coord: str) -> sp_obj:
+def limit(func: sp_obj, var: str, coord: sp_obj) -> sp_obj:
     """ Finds the limit of a function at a coordinate. """
     var = sp.Symbol(var)
     res = sp.limit(func.expr, var, coord)
-    coord = coord.replace('oo', '\\infty') if 'oo' in coord else coord
-    renderer.render(f"$\\lim_{{{var} \\rightarrow {coord}}} "
+    renderer.render(f"$\\lim_{{{var} \\rightarrow {sp.latex(coord)}}} "
                     f"({sp.latex(func.expr)}) = {sp.latex(res)}$")
     return res
 
@@ -32,17 +31,17 @@ def derive(func: sp_obj, var: str) -> sp_obj:
 
 def integrate(func: sp_obj,
               var: str,
-              lt: int = None,
-              ut: int = None) -> (sp_obj, sp_obj):
+              lt: sp_obj = None,
+              ut: sp_obj = None) -> (sp_obj, sp_obj):
     """ Integrates a function with respect to a variable. """
     var = sp.Symbol(var)
     indefinite = sp.expand(sp.simplify(sp.integrate(func.expr, var)))
     # If terminals, then evaluate for the definite integral.
-    if (str(lt).strip('-').strip('+').isnumeric() and
-            str(ut).strip('-').strip('+').isnumeric()):
+    if lt is not None and ut is not None:
         definite = sp.integrate(func.expr, (var, lt, ut))
-        renderer.render(f"$\\int_{{{lt}}}^{{{ut}}} \\ "
-                        f"({sp.latex(func.expr)}) \\ dx = {definite}$")
+        renderer.render(f"$\\int_{{{sp.latex(lt)}}}^{{{sp.latex(ut)}}} \\ "
+                        f"({sp.latex(func.expr)}) \\ dx = "
+                        f"{sp.latex(definite)}$")
     else:
         definite = None
         renderer.render(f"$\\int \\ ({sp.latex(func.expr)}) \\ dx "
