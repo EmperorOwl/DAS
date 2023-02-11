@@ -8,7 +8,7 @@ from backend import plotter
 from modules import transform
 from modules import answer
 from modules.bot import DAS
-from modules.transform import DEFAULT_LIMIT
+from modules.transform import DEFAULT_LIMIT, DEFAULT_ORIGIN
 
 
 class Graph(commands.GroupCog, group_name='graph'):
@@ -84,6 +84,24 @@ class Graph(commands.GroupCog, group_name='graph'):
                    f"Limits: `x ∈ {domain}`, `y ∈ {range}`"
         )
 
+    @single.command()
+    async def vector(self,
+                     itx: discord.Interaction,
+                     vector: transform.Vector,
+                     origin: transform.Vector = DEFAULT_ORIGIN) -> None:
+        """ Plots a vector.
+
+        :param itx: the discord Interaction
+        :param vector: the directional vector to use, e.g. (5, 1)
+        :param origin: the original location of the vector, e.g. (0, 0)
+        """
+        plotter.plot_single_vector(vector, origin)
+        await answer.send(
+            itx,
+            inputs=f"Vector: `{vector}`\n"
+                   f"Origin: `{origin}`"
+        )
+
     multiple = app_commands.Group(name='multiple',
                                   description='Plot two graphs.')
 
@@ -104,6 +122,10 @@ class Graph(commands.GroupCog, group_name='graph'):
         :param dom: the domain to use, e.g. (-5, 5)
         :param ran: the range to use, e.g. (-5, 5)
         """
+        if f1.name == 'f(x)' and f2.name == 'f(x)':
+            # Update function names if they are both the same default one.
+            f1 = transform.Function(name='f1(x)', expr=f1.expr)
+            f2 = transform.Function(name='f2(x)', expr=f2.expr)
         plotter.plot_multiple_functions(f1, f2, var, dom, ran)
         await answer.send(
             itx,
@@ -154,6 +176,29 @@ class Graph(commands.GroupCog, group_name='graph'):
             itx,
             inputs=f"Expressions: `{expr1}`, `{expr2}`\n"
                    f"Limits: `x ∈ {dom}`, `y ∈ {ran}`"
+        )
+
+    @multiple.command()
+    async def vectors(self,
+                      itx: discord.Interaction,
+                      v1: transform.Vector,
+                      v2: transform.Vector,
+                      o1: transform.Vector = DEFAULT_ORIGIN,
+                      o2: transform.Vector = DEFAULT_ORIGIN) -> None:
+        """ Plots two vectors.
+
+        :param itx: the discord Interaction
+        :param v1: the first directional vector, e.g. (5, 1)
+        :param v2: the second directional vector, e.g. (-3, 2)
+        :param o1: the original location of the first vector, e.g. (0, 0)
+        :param o2: the original location of the second vector, e.g. (0, 0)
+        """
+
+        plotter.plot_multiple_vectors(v1, v2, o1, o2)
+        await answer.send(
+            itx,
+            inputs=f"Vectors: `{v1}`, `{v2}`\n"
+                   f"Origins: `{o1}`, `{o2}`"
         )
 
     parametric = app_commands.Group(name='parametric',

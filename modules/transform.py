@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import typing
+from typing import List
 
 import discord
 
@@ -119,3 +120,30 @@ class Value(typing.Generic[sp_obj]):
             if char in val:
                 raise CTR("Value cannot contain relational operators")
         return parser.parse(val)
+
+
+class Vector(typing.NamedTuple):
+    """ Represents a vector.
+
+    attributes:
+        x: the horizontal component
+        y: the vertical component
+
+    """
+    x: float
+    y: float
+
+    @classmethod
+    async def transform(cls, _, val: str) -> Vector:
+        """ Returns the vector. """
+        for char in ['(', ')', '[', ']']:
+            val = val.replace(char, '')
+        x, y = val.split(',')
+        return cls(float(x.strip()), float(y.strip()))
+
+    def __str__(self) -> str:
+        """ Returns the pretty print. """
+        return f"({self.x:g}, {self.y:g})"
+
+
+DEFAULT_ORIGIN = Vector(0.0, 0.0)

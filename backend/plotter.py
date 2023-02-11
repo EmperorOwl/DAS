@@ -9,7 +9,7 @@ import sympy as sp
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-from backend.parser import sp_obj
+from modules import transform
 
 plt.rcParams['mathtext.fontset'] = 'cm'  # Computer Modern.
 plt.rcParams['font.family'] = 'DejaVu Serif'
@@ -31,10 +31,10 @@ def _style_and_save(graph, labels: list[str]) -> None:
     backend.close()
 
 
-def plot_single_function(function: sp_obj,
+def plot_single_function(function: transform.Function,
                          variable: str,
-                         domain: tuple[float, float],
-                         range: tuple[float, float]) -> None:
+                         domain: transform.Limit,
+                         range: transform.Limit) -> None:
     """ Plots a single function. """
     _style_and_save(
         graph=sp.plot(
@@ -51,9 +51,9 @@ def plot_single_function(function: sp_obj,
     )
 
 
-def plot_single_relation(relation: sp_obj,
-                         domain: tuple[float, float],
-                         range: tuple[float, float]) -> None:
+def plot_single_relation(relation: transform.Relation,
+                         domain: transform.Limit,
+                         range: transform.Limit) -> None:
     """ Plots a single relation. """
     _style_and_save(
         graph=sp.plot_implicit(
@@ -69,9 +69,9 @@ def plot_single_relation(relation: sp_obj,
     )
 
 
-def plot_single_3d(expression: sp_obj,
-                   domain: tuple[float, float],
-                   range: tuple[float, float]) -> None:
+def plot_single_3d(expression: transform.Expression,
+                   domain: transform.Limit,
+                   range: transform.Limit) -> None:
     """ Plots a single expression in 3D. """
     _style_and_save(
         graph=sp.plotting.plot3d(
@@ -85,11 +85,11 @@ def plot_single_3d(expression: sp_obj,
     )
 
 
-def plot_multiple_functions(func1: sp_obj,
-                            func2: sp_obj,
+def plot_multiple_functions(func1: transform.Function,
+                            func2: transform.Function,
                             var: str,
-                            domain: tuple[float, float],
-                            range: tuple[float, float]) -> None:
+                            domain: transform.Limit,
+                            range: transform.Limit) -> None:
     """ Plots two functions. """
     graph = sp.plot(
         func1.expr,
@@ -107,10 +107,10 @@ def plot_multiple_functions(func1: sp_obj,
                                    f'${func2.name}={sp.latex(func2.expr)}$'])
 
 
-def plot_multiple_relations(rel1: sp_obj,
-                            rel2: sp_obj,
-                            domain: tuple[float, float],
-                            range: tuple[float, float]) -> None:
+def plot_multiple_relations(rel1: transform.Relation,
+                            rel2: transform.Relation,
+                            domain: transform.Limit,
+                            range: transform.Limit) -> None:
     """ Plots two relations. """
     graph = sp.plot_implicit(
         rel1,
@@ -135,10 +135,10 @@ def plot_multiple_relations(rel1: sp_obj,
                                    f'${sp.latex(rel2)}$'])
 
 
-def plot_multiple_3d(expr1: sp_obj,
-                     expr2: sp_obj,
-                     domain: tuple[float, float],
-                     range: tuple[float, float]) -> None:
+def plot_multiple_3d(expr1: transform.Expression,
+                     expr2: transform.Expression,
+                     domain: transform.Limit,
+                     range: transform.Limit) -> None:
     """ Plots two expressions in 3D. """
     _style_and_save(
         graph=sp.plotting.plot3d(
@@ -153,8 +153,8 @@ def plot_multiple_3d(expr1: sp_obj,
     )
 
 
-def plot_parametric_equations(xt: sp_obj,
-                              yt: sp_obj,
+def plot_parametric_equations(xt: transform.Function,
+                              yt: transform.Function,
                               t_start: float,
                               t_end: float) -> None:
     """ Plots a pair of parametric equations. """
@@ -166,4 +166,76 @@ def plot_parametric_equations(xt: sp_obj,
             show=False
         ),
         labels=[f'$x(t)={sp.latex(xt.expr)}, \\ y(t)={sp.latex(yt.expr)}$']
+    )
+
+
+def _style_and_save_vector(x_max: float, y_max: float):
+    """ Styles and saves vector graphs. """
+    plt.grid(True, linestyle=':')  # Set grid.
+    plt.xlim(-x_max, x_max)  # Set horizontal limits.
+    plt.ylim(-y_max, y_max)  # Set vertical limits.
+    ax = plt.gca()  # Fetch current axes.
+    ax.spines['left'].set_position('center')  # Move left axis to center.
+    ax.spines['bottom'].set_position('center')  # Move bottom axis to center.
+    ax.spines['right'].set_color('none')  # Remove right axis.
+    ax.spines['top'].set_color('none')  # Remove top axis.
+    plt.savefig(fname=FNAME, dpi=DPI)  # Save figure.
+    plt.close()  # Close plot.
+
+
+def plot_single_vector(v: transform.Vector,
+                       o: transform.Vector) -> None:
+    """ Plots a vector. """
+    plt.quiver(
+        o.x,
+        o.y,
+        v.x,
+        v.y,
+        color='lightskyblue',
+        angles='xy',
+        scale_units='xy',
+        scale=1
+    )
+    # Label the end of the vector.
+    plt.text(
+        o.x + v.x,
+        o.y + v.y,
+        f"$({o.x + v.x:g}, {o.y + v.y:g})$"
+    )
+    _style_and_save_vector(
+        x_max=1.5 * abs(o.x + v.x),
+        y_max=1.5 * abs(o.y + v.y)
+    )
+
+
+def plot_multiple_vectors(v1: transform.Vector,
+                          v2: transform.Vector,
+                          o1: transform.Vector,
+                          o2: transform.Vector) -> None:
+    """ Plots two vectors. """
+    plt.quiver(
+        [o1.x, o2.x],
+        [o1.y, o2.y],
+        [v1.x, v2.x],
+        [v1.y, v2.y],
+        color=['darkorange', 'darkslateblue'],
+        angles='xy',
+        scale_units='xy',
+        scale=1
+    )
+    # Label the end of the first vector.
+    plt.text(
+        o1.x + v1.x,
+        o1.y + v1.y,
+        f"$({o1.x + v1.x:g}, {o1.y + v1.y:g})$"
+    )
+    # Label the end of the second vector.
+    plt.text(
+        o2.x + v2.x,
+        o2.y + v2.y,
+        f"$({o2.x + v2.x:g}, {o2.y + v2.y:g})$"
+    )
+    _style_and_save_vector(
+        x_max=1.5 * max([abs(o1.x + v1.x), abs(o2.x + v2.x)]),
+        y_max=1.5 * max([abs(o1.y + v1.y), abs(o2.y + v2.y)])
     )
