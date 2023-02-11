@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import typing
-from typing import List
-
 import discord
 
 from backend import parser
