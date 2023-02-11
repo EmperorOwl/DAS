@@ -9,16 +9,6 @@ from modules import answer
 from modules import transform
 
 
-async def _delete(msg: discord.Message) -> None:
-    """ [Helper] Deletes a message without raising errors. """
-    try:
-        await msg.delete()
-    except AttributeError:
-        pass  # As message does not exist.
-    except discord.errors.NotFound:
-        pass  # As message may have already been deleted.
-
-
 class Single(discord.ui.Button):
     """ Represents a graph button which plots a single function. """
 
@@ -84,11 +74,17 @@ class Delete(discord.ui.Button):
     async def callback(self, itx: discord.Interaction) -> None:
         """ Handles a button press. """
         msg = itx.message
-        if self.delete_reference:
-            ref = await msg.channel.fetch_message(msg.reference.message_id)
-            await _delete(ref)
-        await _delete(msg)
-        self.view.stop()
+        try:
+            await msg.delete()
+            if self.delete_reference:
+                ref = await msg.channel.fetch_message(msg.reference.message_id)
+                await ref.delete()
+        except AttributeError:
+            pass  # As message does not exist.
+        except discord.errors.NotFound:
+            pass  # As message may have already been deleted.
+        finally:
+            self.view.stop()
 
 
 class Confirm(discord.ui.Button):
@@ -102,11 +98,17 @@ class Confirm(discord.ui.Button):
     async def callback(self, itx: discord.Interaction) -> None:
         """ Handles a button press. """
         msg = itx.message
-        if self.delete_reference:
-            ref = await msg.channel.fetch_message(msg.reference.message_id)
-            await _delete(ref)
-        await itx.response.edit_message(view=self.view.clear_items())
-        self.view.stop()
+        try:
+            if self.delete_reference:
+                ref = await msg.channel.fetch_message(msg.reference.message_id)
+                await ref.delete()
+        except AttributeError:
+            pass  # As message does not exist.
+        except discord.errors.NotFound:
+            pass  # As message may have already been deleted.
+        finally:
+            await itx.response.edit_message(view=self.view.clear_items())
+            self.view.stop()
 
 
 class Buttons(discord.ui.View):
