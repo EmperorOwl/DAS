@@ -6,11 +6,6 @@ from backend import renderer
 from backend.parser import sp_obj
 
 
-def display(func: sp_obj) -> None:
-    """ Displays a function. """
-    renderer.render(f'${func.name}={sp.latex(func.expr)}$')
-
-
 def limit(func: sp_obj, var: str, coord: sp_obj) -> sp_obj:
     """ Finds the limit of a function at a coordinate. """
     var = sp.Symbol(var)

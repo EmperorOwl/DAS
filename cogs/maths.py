@@ -5,7 +5,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from backend import calculator
+from backend import calculator, renderer
 from modules import transform
 from modules import answer
 from modules.buttons import Single, Multiple, Delete, Confirm
@@ -22,19 +22,17 @@ class Maths(commands.Cog):
     @app_commands.command()
     async def display(self,
                       itx: discord.Interaction,
-                      function: transform.Function,
-                      variable: app_commands.Range[str, 1, 1]) -> None:
-        """ Displays a function.
+                      text: app_commands.Range[str, 1, 100]) -> None:
+        """ Displays math text as an image.
 
         :param itx: the Discord interaction
-        :param variable: the variable to use, e.g. x
-        :param function: the function to use, e.g. f(x)=x^3
+        :param text: the text to display, e.g. \frac{1}{2}
         """
-        calculator.display(function)
+        renderer.render(f"${text}$")
         await answer.send(
             itx,
-            inputs=f"Function: `{function}`",
-            btns=[Single(function, variable), Delete(), Confirm()]
+            inputs=f"Input: `{text}`",
+            btns=[Delete(), Confirm()]
         )
 
     @app_commands.command()
