@@ -1,8 +1,7 @@
 """ Code for miscellaneous commands. """
 
-import sys
 import time
-import psutil
+import platform
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -71,11 +70,13 @@ class Misc(commands.Cog):
                         f"`        Servers:` {len(self.bot.guilds)}\n"
                         f"`          Users:` {self.bot.get_number_of_users()}\n"
                         f"`         Shards:` {self.bot.shard_count}\n"
-                        f"`         Memory:` {psutil.virtual_memory().percent} %\n"
-                        f"`      CPU Usage:` {psutil.cpu_percent(interval=1)} %\n"
-                        f"`        Latency:` {int(self.bot.latency * 1000)} ms\n"
+                        f"`         Memory:` {self.bot.get_memory_usage()}\n"
+                        f"`      CPU Usage:` {self.bot.get_cpu_usage()}\n"
+                        f"`        Latency:` {int(self.bot.latency * 1000)}ms\n"
                         f"`    Bot Version:` {self.bot['version']}\n"
-                        f"` Python Version:` {sys.version[:6]}\n"
+                        f"` Python Version:` {platform.python_version()}\n"
+                        f"`       Platform:` {platform.platform()}\n"
+                        f"`         Uptime:` {self.bot.get_uptime()}\n"
                         f"`           Host:` {self.bot['host']}\n"
                         '\n'
                         f"[Top.gg Site]({self.bot['site']}) ~ " +

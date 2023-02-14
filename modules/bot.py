@@ -7,10 +7,10 @@ References:
 """
 
 import json
+import psutil
 import topgg
 import discord
 from discord.ext import commands
-from datetime import datetime
 
 
 class DAS(commands.AutoShardedBot):
@@ -50,6 +50,7 @@ class DAS(commands.AutoShardedBot):
         )
         self.test_guild = discord.Object(id=self['test_guild']) if self['test_guild'] else None
         self.topggpy = None
+        self.start_time = discord.utils.utcnow()
 
     async def setup_hook(self) -> None:
         """ Enables asynchronous setup tasks to be run. """
@@ -67,7 +68,7 @@ class DAS(commands.AutoShardedBot):
     async def on_ready(self) -> None:
         """ Prints a message to indicate the bot is online. """
         print(f"Logged in as {self.user.name} - {self.user.id} - "
-              f"{datetime.now().strftime('%H:%M')}")
+              f"{self.start_time.strftime('%H:%M')}")
 
     async def on_autopost_success(self) -> None:
         """ Prints a message to indicate bot has posted guild count. """
@@ -80,6 +81,40 @@ class DAS(commands.AutoShardedBot):
         for guild in self.guilds:
             users += guild.member_count  # Likely results in double-counting.
         return users
+
+    def get_uptime(self) -> str:
+        """ Returns the bot's uptime. """
+        seconds = (discord.utils.utcnow() - self.start_time).total_seconds()
+        minutes, seconds = divmod(seconds, 60)
+        hours, minutes = divmod(minutes, 60)
+        days, hours = divmod(hours, 24)
+        return f"{days:.0f}d, {hours:.0f}h, {minutes:.0f}m and {seconds:.0f}s"
+
+    @staticmethod
+    def _get_size(bytes_: int, suffix="B") -> str:
+        """ [HELPER] Scales bytes to its proper format.
+        e.g:
+            1253656 => '1.20 MB'
+            1253656678 => '1.17 GB'
+        """
+        factor = 1024
+        for unit in ["", "K", "M", "G", "T", "P"]:
+            if bytes_ < factor:
+                return f"{bytes_:.2f}{unit}{suffix}"
+            bytes_ /= factor
+
+    @staticmethod
+    def get_memory_usage() -> str:
+        """ Returns the bot's memory usage. """
+        total = DAS._get_size(psutil.virtual_memory().total)
+        used = DAS._get_size(psutil.virtual_memory().used)
+        percentage = psutil.virtual_memory().percent
+        return f"{used} used out of {total} ({percentage}%)"
+
+    @staticmethod
+    def get_cpu_usage() -> str:
+        """ Returns the bot's CPU usage. """
+        return f"{psutil.cpu_percent()}%"
 
     def get_app_command(self, name) -> commands.Command:
         """ Returns a standalone application command. """
