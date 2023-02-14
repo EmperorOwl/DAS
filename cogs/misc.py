@@ -31,7 +31,7 @@ class Misc(commands.Cog):
                 name="My Commands",
                 value=(
                     """
-                    `/display` - Display a function!
+                    `/display` - Display text as image!
                     `/graph` - Plot a graph!
                     `/limit` - Find the limit of a function!
                     `/derive` - Derive a function!
@@ -52,7 +52,7 @@ class Misc(commands.Cog):
                 value="`/about` `/invite` `/ping` `/server` `/vote`",
                 inline=False
             ).set_footer(
-                text=f"Developed by EmperorOwl • Version: {self.bot['version']}"
+                text=f"Developed by EmperorOwl • Version {self.bot['version']}"
             )
         )
 
