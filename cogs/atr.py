@@ -26,17 +26,19 @@ class ATR(commands.Cog):
             if atr:
                 settings[str(itx.guild_id)]['atr'] = False
                 content = f"⚙**  |  {itx.user.display_name}** has disabled " \
-                          f"Automatic Tex Recognition."
+                          f"Automatic Tex Recognition (ATR)."
             else:
                 settings[str(itx.guild_id)]['atr'] = True
                 content = f"⚙**  |  {itx.user.display_name}** has enabled " \
-                          f"Automatic Tex Recognition! Try typing `$x^2$`.\n" \
+                          f"Automatic Tex Recognition! (ATR). " \
+                          f"Try typing `$x^2$`.\n" \
                           f"To learn more, check out " \
                           f"<{self.bot['docs']}/tex-tutorial>"
         except KeyError:  # User's first time.
             settings[str(itx.guild_id)] = {'atr': True}
             content = f"⚙**  |  {itx.user.display_name}** has enabled " \
-                      f"Automatic Tex Recognition! Try typing `$x^2$`.\n" \
+                      f"Automatic Tex Recognition! (ATR). " \
+                      f"Try typing `$x^2$`.\n" \
                       f"To learn more, check out " \
                       f"<{self.bot['docs']}/tex-tutorial>"
         self.bot.edit_atr_settings(settings)

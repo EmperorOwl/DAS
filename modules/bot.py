@@ -8,7 +8,6 @@ References:
 
 import json
 import platform
-
 import psutil
 import topgg
 import discord
