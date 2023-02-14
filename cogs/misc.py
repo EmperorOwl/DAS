@@ -1,7 +1,6 @@
 """ Code for miscellaneous commands. """
 
 import time
-import platform
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -74,8 +73,8 @@ class Misc(commands.Cog):
                         f"`      CPU Usage:` {self.bot.get_cpu_usage()}\n"
                         f"`        Latency:` {int(self.bot.latency * 1000)}ms\n"
                         f"`    Bot Version:` {self.bot['version']}\n"
-                        f"` Python Version:` {platform.python_version()}\n"
-                        f"`       Platform:` {platform.platform()}\n"
+                        f"` Python Version:` {self.bot.get_py_version()}\n"
+                        f"`       Platform:` {self.bot.get_platform()}\n"
                         f"`         Uptime:` {self.bot.get_uptime()}\n"
                         f"`           Host:` {self.bot['host']}\n"
                         '\n'

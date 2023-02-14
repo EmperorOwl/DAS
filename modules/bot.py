@@ -7,6 +7,8 @@ References:
 """
 
 import json
+import platform
+
 import psutil
 import topgg
 import discord
@@ -91,30 +93,27 @@ class DAS(commands.AutoShardedBot):
         return f"{days:.0f}d, {hours:.0f}h, {minutes:.0f}m and {seconds:.0f}s"
 
     @staticmethod
-    def _get_size(bytes_: int, suffix="B") -> str:
-        """ [HELPER] Scales bytes to its proper format.
-        e.g:
-            1253656 => '1.20 MB'
-            1253656678 => '1.17 GB'
-        """
-        factor = 1024
-        for unit in ["", "K", "M", "G", "T", "P"]:
-            if bytes_ < factor:
-                return f"{bytes_:.2f}{unit}{suffix}"
-            bytes_ /= factor
-
-    @staticmethod
     def get_memory_usage() -> str:
-        """ Returns the bot's memory usage. """
-        total = DAS._get_size(psutil.virtual_memory().total)
-        used = DAS._get_size(psutil.virtual_memory().used)
+        """ Returns the bot's memory usage in GB. """
+        total = psutil.virtual_memory().total / (1 * 10 ** 9)
+        used = psutil.virtual_memory().used / (1 * 10 ** 9)
         percentage = psutil.virtual_memory().percent
-        return f"{used} used out of {total} ({percentage}%)"
+        return f"{used:.2f}GB used out of {total:.2f}GB ({percentage}%)"
 
     @staticmethod
     def get_cpu_usage() -> str:
         """ Returns the bot's CPU usage. """
         return f"{psutil.cpu_percent()}%"
+
+    @staticmethod
+    def get_py_version() -> str:
+        """ Returns the Python version. """
+        return platform.python_version()
+
+    @staticmethod
+    def get_platform() -> str:
+        """ Returns the bot's OS. """
+        return f"{platform.system()} {platform.release()}"
 
     def get_app_command(self, name) -> commands.Command:
         """ Returns a standalone application command. """
