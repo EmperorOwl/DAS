@@ -1,6 +1,7 @@
 """ Code for math commands. """
 
 import typing
+import random
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -34,6 +35,12 @@ class Maths(commands.Cog):
             inputs=f"Input: `{text}`",
             btns=[Delete(), Confirm()]
         )
+        # 25% chance to send tip to enable ATR.
+        if random.random() < 0.25:
+            await (await itx.original_response()).reply(
+                "**TIP**: To automatically render messages without having to "
+                "use a slash command, enable `/atr`!"
+            )
 
     @app_commands.command()
     async def limit(self,
