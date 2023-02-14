@@ -26,7 +26,7 @@ class Maths(commands.Cog):
         """ Displays math text as an image.
 
         :param itx: the Discord interaction
-        :param text: the text to display, e.g. \frac{1}{2}
+        :param text: the text to display, e.g. f(x)=2x+2
         """
         renderer.render(f"${text}$")
         await answer.send(
