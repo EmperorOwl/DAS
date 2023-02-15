@@ -203,8 +203,8 @@ def plot_single_vector(v: transform.Vector,
         f"$({o.x + v.x:g}, {o.y + v.y:g})$"
     )
     _style_and_save_vector(
-        x_max=1.5 * abs(o.x + v.x),
-        y_max=1.5 * abs(o.y + v.y)
+        x_max=1.5 * max(map(abs, [o.x + v.x, o.x, v.x])),
+        y_max=1.5 * max(map(abs, [o.y + v.y, o.y, v.y]))
     )
 
 
@@ -236,6 +236,6 @@ def plot_multiple_vectors(v1: transform.Vector,
         f"$({o2.x + v2.x:g}, {o2.y + v2.y:g})$"
     )
     _style_and_save_vector(
-        x_max=1.5 * max([abs(o1.x + v1.x), abs(o2.x + v2.x)]),
-        y_max=1.5 * max([abs(o1.y + v1.y), abs(o2.y + v2.y)])
+        x_max=1.5 * max(map(abs, [o1.x + v1.x, o2.x + v2.x, o1.x, v1.x, o2.x, v2.x])),
+        y_max=1.5 * max(map(abs, [o1.y + v1.y, o2.y + v2.y, o1.y, v1.y, o2.y, v2.y])),
     )
