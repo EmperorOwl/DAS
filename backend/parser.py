@@ -21,7 +21,9 @@ REPLACEMENTS = {
     'arccos': 'acos',
     'arctan': 'atan',
     'cosec': 'csc',
-    ',': ''
+    ',': '',
+    '°': '*(pi/180)',
+    'deg': '*(pi/180)'
 }
 
 sp_obj = typing.TypeVar('sp_obj')

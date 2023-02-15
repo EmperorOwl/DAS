@@ -191,7 +191,7 @@ class Maths(commands.Cog):
         """ Evaluates an expression.
 
         :param itx: the Discord interaction
-        :param expression: the expression to use, e.g. 1+1
+        :param expression: the expression to use, e.g. 1+1, sin(90deg), cos(pi)
         """
         await itx.response.send_message(
             f"🧮**  |  {itx.user.display_name}**, "
