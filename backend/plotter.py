@@ -180,32 +180,34 @@ def _style_and_save_vector(x_max: float, y_max: float):
     ax.spines['right'].set_color('none')  # Remove right axis.
     ax.spines['top'].set_color('none')  # Remove top axis.
     plt.savefig(fname=FNAME, dpi=DPI)  # Save figure.
-    plt.close()  # Close plot.
 
 
 def plot_single_vector(v: transform.Vector,
                        o: transform.Vector) -> None:
     """ Plots a vector. """
-    plt.quiver(
-        o.x,
-        o.y,
-        v.x,
-        v.y,
-        color='lightskyblue',
-        angles='xy',
-        scale_units='xy',
-        scale=1
-    )
-    # Label the end of the vector.
-    plt.text(
-        o.x + v.x,
-        o.y + v.y,
-        f"$({o.x + v.x:g}, {o.y + v.y:g})$"
-    )
-    _style_and_save_vector(
-        x_max=1.5 * max(map(abs, [o.x + v.x, o.x, v.x])),
-        y_max=1.5 * max(map(abs, [o.y + v.y, o.y, v.y]))
-    )
+    try:
+        plt.quiver(
+            o.x,
+            o.y,
+            v.x,
+            v.y,
+            color='lightskyblue',
+            angles='xy',
+            scale_units='xy',
+            scale=1
+        )
+        # Label the end of the vector.
+        plt.text(
+            o.x + v.x,
+            o.y + v.y,
+            f"$({o.x + v.x:g}, {o.y + v.y:g})$"
+        )
+        _style_and_save_vector(
+            x_max=1.5 * max(map(abs, [o.x + v.x, o.x, v.x])),
+            y_max=1.5 * max(map(abs, [o.y + v.y, o.y, v.y]))
+        )
+    finally:
+        plt.close()
 
 
 def plot_multiple_vectors(v1: transform.Vector,
@@ -213,29 +215,32 @@ def plot_multiple_vectors(v1: transform.Vector,
                           o1: transform.Vector,
                           o2: transform.Vector) -> None:
     """ Plots two vectors. """
-    plt.quiver(
-        [o1.x, o2.x],
-        [o1.y, o2.y],
-        [v1.x, v2.x],
-        [v1.y, v2.y],
-        color=['darkorange', 'darkslateblue'],
-        angles='xy',
-        scale_units='xy',
-        scale=1
-    )
-    # Label the end of the first vector.
-    plt.text(
-        o1.x + v1.x,
-        o1.y + v1.y,
-        f"$({o1.x + v1.x:g}, {o1.y + v1.y:g})$"
-    )
-    # Label the end of the second vector.
-    plt.text(
-        o2.x + v2.x,
-        o2.y + v2.y,
-        f"$({o2.x + v2.x:g}, {o2.y + v2.y:g})$"
-    )
-    _style_and_save_vector(
-        x_max=1.5 * max(map(abs, [o1.x + v1.x, o2.x + v2.x, o1.x, v1.x, o2.x, v2.x])),
-        y_max=1.5 * max(map(abs, [o1.y + v1.y, o2.y + v2.y, o1.y, v1.y, o2.y, v2.y])),
-    )
+    try:
+        plt.quiver(
+            [o1.x, o2.x],
+            [o1.y, o2.y],
+            [v1.x, v2.x],
+            [v1.y, v2.y],
+            color=['darkorange', 'darkslateblue'],
+            angles='xy',
+            scale_units='xy',
+            scale=1
+        )
+        # Label the end of the first vector.
+        plt.text(
+            o1.x + v1.x,
+            o1.y + v1.y,
+            f"$({o1.x + v1.x:g}, {o1.y + v1.y:g})$"
+        )
+        # Label the end of the second vector.
+        plt.text(
+            o2.x + v2.x,
+            o2.y + v2.y,
+            f"$({o2.x + v2.x:g}, {o2.y + v2.y:g})$"
+        )
+        _style_and_save_vector(
+            x_max=1.5 * max(map(abs, [o1.x + v1.x, o2.x + v2.x, o1.x, v1.x, o2.x, v2.x])),
+            y_max=1.5 * max(map(abs, [o1.y + v1.y, o2.y + v2.y, o1.y, v1.y, o2.y, v2.y])),
+        )
+    finally:
+        plt.close()
