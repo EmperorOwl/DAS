@@ -2,6 +2,7 @@
 
 import sys
 import traceback
+import matplotlib.pyplot as plt
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -126,6 +127,8 @@ class Error(commands.Cog):
             await self._handle_uncaught(itx, error)
         # Finally attach buttons to error message.
         await Buttons.with_msg(await itx.original_response(), btns=[Delete()])
+        # Also close the plot to prevent issues.
+        plt.close()
 
 
 async def setup(bot: DAS) -> None:
