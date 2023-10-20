@@ -17,3 +17,4 @@ jobs:
             git pull
             source venv/bin/activate
             pm2 restart main.py
+            deactivate
