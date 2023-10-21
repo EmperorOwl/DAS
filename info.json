@@ -1,0 +1,12 @@
+{
+  "version": "4.0.1",
+  "status": "/help | 9+10=21!",
+  "developer": "EmperorOwl",
+  "docs": "https://emperorowl.gitbook.io/das",
+  "topgg": "https://top.gg/bot/863295366023086090",
+  "repo": "https://github.com/EmperorOwl/DAS",
+  "server": "https://discord.gg/Q3BMHGa8Wj",
+  "invite": "https://discord.com/oauth2/authorize?client_id=863295366023086090&permissions=139586758720&scope=bot%20applications.commands",
+  "description": "The Discord Algebra System (DAS) is a minimalistic, yet powerful tool that acts as a Scientific Calculator, Graph Plotter and TeX Renderer, to enhance the study of mathematics in Discord.",
+  "host": "GalaxyGate"
+}

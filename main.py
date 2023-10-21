@@ -1,6 +1,6 @@
 """ Code for running the Discord bot. """
 
-from modules.bot import DAS
+from modules.bot import DAS, BOT_TOKEN
 
 bot = DAS()
-bot.run(token=bot['token'], reconnect=True)
+bot.run(token=BOT_TOKEN, reconnect=True)

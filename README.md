@@ -88,7 +88,6 @@ In August 2023, DAS was featured on [Discord's Best Apps for Students](https://d
 ### Built With
 
 - User Interface: [Discord](https://discord.com/)
-- Database: [MongoDB](https://www.mongodb.com/)
 - Hosting: [GalaxyGate](https://galaxygate.net/)
 - Programming Language: [Python](https://www.python.org/)
 - Libraries Used: [discord.py](https://discordpy.readthedocs.io/), [matplotlib](https://matplotlib.org/), [sympy](https://www.sympy.org/)
@@ -99,7 +98,7 @@ In August 2023, DAS was featured on [Discord's Best Apps for Students](https://d
 
 ## Getting Started
 
-To get a local copy up and running follow these simple steps.
+To get a local copy up and running follow the steps listed below.
 
 ### Prerequisites
 
@@ -116,11 +115,19 @@ DAS works with Python 3.8 or higher (as [discord.py](https://discordpy.readthedo
    ```sh
    pip install -r requirements.txt
    ```
-4. Enter your bot's token in a `config.json` file
+4. Create a `config.json` file with the following
    ```json
    {
-      "token": "12abcd34"
+      "is_production": false,
+      "bot_token": "<Your Discord Bot Token>",
+      "topgg_token": null,
+      "log_channel": null,
+      "test_guild": "<Your Discord Server ID>"
    }
+   ```
+5. In your Discord server, enter the following message command to sync the slash commands
+   ```txt
+   @<Your Bot> sync
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
