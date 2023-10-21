@@ -9,8 +9,8 @@ from discord.ext import commands
 
 CONFIG_FILE = 'config.json'
 
-with open(CONFIG_FILE, 'r') as f:
-    config = json.load(f)
+with open(CONFIG_FILE, 'r') as file:
+    config = json.load(file)
     IS_PRODUCTION = config['is_production']
     BOT_TOKEN = config['bot_token']
     TOPGG_TOKEN = config['topgg_token']
@@ -151,8 +151,11 @@ class DAS(commands.AutoShardedBot if IS_PRODUCTION else commands.Bot):
     @staticmethod
     def get_atr_settings() -> dict:
         """ Returns the dictionary mapping guild id to ATR status. """
-        with open(DAS.SETTINGS_FILE, 'r') as f:
-            return json.load(f)
+        try:
+            with open(DAS.SETTINGS_FILE, 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            return {}
 
     @staticmethod
     def edit_atr_settings(new_settings: dict) -> None:
