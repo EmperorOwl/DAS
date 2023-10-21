@@ -1,10 +1,4 @@
-""" Code for defining the bot.
-
-References:
-    https://docs.top.gg/libraries/python/
-    https://topggpy.readthedocs.io/en/stable/api.html
-
-"""
+""" Code for defining the bot. """
 
 import json
 import platform
@@ -13,20 +7,27 @@ import topgg
 import discord
 from discord.ext import commands
 
+CONFIG_FILE = 'config.json'
 
-class DAS(commands.AutoShardedBot):
+with open(CONFIG_FILE, 'r') as f:
+    config = json.load(f)
+    IS_PRODUCTION = config['is_production']
+    BOT_TOKEN = config['bot_token']
+    TOPGG_TOKEN = config['topgg_token']
+    TEST_GUILD = config['test_guild']
+
+
+class DAS(commands.AutoShardedBot if IS_PRODUCTION else commands.Bot):
     """ Represents the bot DAS.
 
-    constants:
+    Attributes:
         COGS: the locations of the bot's cogs
-        CONFIG_FILE: the location of the bot's configuration file
+        INFO_FILE: the location of the bot's info file
         SETTINGS_FILE: the location of the settings file
-        STATUS: the status text underneath the bot's name on Discord
-
-    attributes:
+        STATS_FILE: the location of the bot's stats file
         test_guild: the id of the test guild or None
-        topggpy: the Topgg client
-
+        topgg_client: the Topgg client or None
+        start_time: the time the bot came online
     """
     COGS = [
         'cogs.maths',
@@ -36,44 +37,52 @@ class DAS(commands.AutoShardedBot):
         'cogs.error',
         'cogs.dev'
     ]
-    CONFIG_FILE = 'config.json'
+    INFO_FILE = 'info.json'
     SETTINGS_FILE = 'settings.json'
-    STATUS = '/help | 9+10=21!'
+    STATS_FILE = 'stats.json'
 
     def __init__(self) -> None:
         """ Creates an instance of DAS. """
         intents = discord.Intents.default()
-        intents.message_content = True  # Enables bot to read Discord messages.
+        intents.message_content = True  # Enables the bot to read messages.
         super().__init__(
             command_prefix=commands.when_mentioned,
             intents=intents,
-            activity=discord.Game(name=DAS.STATUS)
+            activity=discord.Game(name=self['status'])
         )
-        self.test_guild = discord.Object(id=self['test_guild']) if self['test_guild'] else None
-        self.topggpy = None
-        self.start_time = discord.utils.utcnow()
+        if IS_PRODUCTION:
+            self.test_guild = None
+        elif TEST_GUILD is None:
+            raise ValueError("development bot must define test_guild in "
+                             "configuration file")
+        else:
+            self.test_guild = discord.Object(id=TEST_GUILD)
+        self.topgg_client = None
+        self.start_time = None
 
     async def setup_hook(self) -> None:
         """ Enables asynchronous setup tasks to be run. """
         for cog in DAS.COGS:
             await self.load_extension(cog)
-        # Initialise the Topgg client.
-        self.topggpy = topgg.DBLClient(
-            bot=self,
-            token=self['topgg'],
-            # Don't post guild and shard counts on development bot.
-            autopost=False if self.test_guild else True,
-            post_shard_count=False if self.test_guild else True
-        )
+        # Set up Topgg client.
+        if TOPGG_TOKEN:
+            self.topgg_client = topgg.DBLClient(
+                bot=self,
+                token=TOPGG_TOKEN,
+                # Do not autopost server and shard count on dev bot.
+                autopost=True if IS_PRODUCTION else False,
+                post_shard_count=True if IS_PRODUCTION else False
+            )
 
     async def on_ready(self) -> None:
         """ Prints a message to indicate the bot is online. """
+        self.start_time = discord.utils.utcnow()
         print(f"Logged in as {self.user.name} - {self.user.id} - "
               f"{self.start_time.strftime('%H:%M')}")
 
     async def on_autopost_success(self) -> None:
         """ Prints a message to indicate bot has posted guild count. """
-        print(f"Posted server count {self.topggpy.guild_count} guilds.")
+        print(f"Posted server count {self.topgg_client.guild_count} guilds.")
         print(f"Posted shard count {self.shard_count} shards.")
 
     def get_number_of_users(self) -> int:
@@ -136,7 +145,7 @@ class DAS(commands.AutoShardedBot):
 
     def __getitem__(self, key: str) -> str:
         """ Returns information about the bot depending on a key.  """
-        with open(DAS.CONFIG_FILE, 'r') as f:
+        with open(DAS.INFO_FILE, 'r') as f:
             return json.load(f)[key]
 
     @staticmethod

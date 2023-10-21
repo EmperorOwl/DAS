@@ -23,8 +23,7 @@ class Misc(commands.Cog):
                 title="Help Page",
                 url=self.bot['docs'],
                 description=self.bot['description'],
-                colour=discord.Colour.blue(),
-                timestamp=discord.utils.utcnow()
+                colour=discord.Colour.blue()
             ).set_thumbnail(
                 url=self.bot.user.avatar.url
             ).add_field(
@@ -52,7 +51,8 @@ class Misc(commands.Cog):
                 value="`/about` `/invite` `/ping` `/server` `/vote`",
                 inline=False
             ).set_footer(
-                text=f"Developed by EmperorOwl • Version {self.bot['version']}"
+                text=f"Developed by {self.bot['developer']} • "
+                     f"Version {self.bot['version']}"
             )
         )
 
@@ -78,7 +78,7 @@ class Misc(commands.Cog):
                         f"`         Uptime:` {self.bot.get_uptime()}\n"
                         f"`           Host:` {self.bot['host']}\n"
                         '\n'
-                        f"[Top.gg Site]({self.bot['site']}) ~ " +
+                        f"[Top.gg Site]({self.bot['topgg']}) ~ " +
                         f"[Bot Invite]({self.bot['invite']}) ~ " +
                         f"[Server Invite]({self.bot['server']}) ~ " +
                         f"[Gitbook Docs]({self.bot['docs']}) ~ " +
@@ -107,7 +107,7 @@ class Misc(commands.Cog):
                 description=(
                     f"To add me to another server, click [here]({self.bot['invite']}).\n"
                     f"To join my official server, click [here]({self.bot['server']}).\n"
-                    f"To support DAS on Top.gg, click [here]({self.bot['site']})."
+                    f"To support DAS on Top.gg, click [here]({self.bot['topgg']})."
                 ),
                 color=discord.Colour.blue()
             )
@@ -121,7 +121,7 @@ class Misc(commands.Cog):
     @app_commands.command()
     async def vote(self, itx: discord.Interaction) -> None:
         """ Responds with the link to vote for DAS on Top.gg. """
-        await itx.response.send_message(f"Vote for DAS on Top.gg! <{self.bot['site']}/vote>")
+        await itx.response.send_message(f"Vote for DAS on Top.gg! <{self.bot['topgg']}/vote>")
 
 
 async def setup(bot: DAS) -> None:
