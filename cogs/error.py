@@ -7,7 +7,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from modules.bot import DAS
+from modules.bot import DAS, LOG_CHANNEL
 from modules.buttons import Buttons, Delete
 from modules.transform import CTR
 
@@ -44,33 +44,34 @@ class Error(commands.Cog):
         print('Ignoring exception in command {}:'.format(itx.command), file=sys.stderr)
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
         # Send error message to log channel.
-        log_channel = self.bot.get_channel(int(self.bot['log_channel']))
-        kwargs = " ".join(f"{name}: {value}" for name, value in
-                          list(DAS.get_original_inputs(itx).items()))
-        await log_channel.send(
-            embed=discord.Embed(
-                title='Error Logged',
-                colour=discord.Colour.red(),
-                timestamp=discord.utils.utcnow()
-            ).add_field(
-                name='Information',
-                value='```'
-                      f"Guild ID: {itx.guild.id}\n"
-                      f"Interaction ID: {itx.id}\n"
-                      f"User ID: {itx.user.id}\n"
-                      '```'
-            ).add_field(
-                name='Command',
-                value=f"```/{itx.command.qualified_name} {kwargs}```",
-                inline=False
-            ).add_field(
-                name='Exception',
-                value=f"```{error}```",
-                inline=False
-            ).set_footer(
-                text=f"Bot Version: {self.bot['version']}"
+        if LOG_CHANNEL:
+            log_channel = self.bot.get_channel(LOG_CHANNEL)
+            kwargs = " ".join(f"{name}: {value}" for name, value in
+                              list(DAS.get_original_inputs(itx).items()))
+            await log_channel.send(
+                embed=discord.Embed(
+                    title='Error Logged',
+                    colour=discord.Colour.red(),
+                    timestamp=discord.utils.utcnow()
+                ).add_field(
+                    name='Information',
+                    value='```'
+                          f"Guild ID: {itx.guild.id}\n"
+                          f"Interaction ID: {itx.id}\n"
+                          f"User ID: {itx.user.id}\n"
+                          '```'
+                ).add_field(
+                    name='Command',
+                    value=f"```/{itx.command.qualified_name} {kwargs}```",
+                    inline=False
+                ).add_field(
+                    name='Exception',
+                    value=f"```{error}```",
+                    inline=False
+                ).set_footer(
+                    text=f"Bot Version: {self.bot['version']}"
+                )
             )
-        )
 
     @commands.Cog.listener()
     async def on_app_command_error(self,

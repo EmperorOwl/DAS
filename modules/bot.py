@@ -1,6 +1,5 @@
 """ Code for defining the bot. """
 
-import json
 import platform
 import psutil
 import topgg
@@ -8,15 +7,16 @@ import discord
 from discord.ext import commands
 from pathlib import Path
 
+from modules.utils import read_data_from_json_file
+
 CONFIG_FILE = 'config.json'
-
-with open(CONFIG_FILE, 'r') as file:
-    config = json.load(file)
-    IS_PRODUCTION = config['is_production']
-    BOT_TOKEN = config['bot_token']
-    TOPGG_TOKEN = config['topgg_token']
-    TEST_GUILD = config['test_guild']
-
+config = read_data_from_json_file(CONFIG_FILE)
+IS_PRODUCTION = config['is_production']
+BOT_TOKEN = config['bot_token']
+TOPGG_TOKEN = config['topgg_token']
+LOG_CHANNEL = config['log_channel']
+STATS_CHANNEL = config['stats_channel']
+TEST_GUILD = config['test_guild']
 RENDERS_PATH = Path(__file__).resolve().parent.parent / "renders"
 
 
@@ -153,20 +153,4 @@ class DAS(commands.AutoShardedBot if IS_PRODUCTION else commands.Bot):
 
     def __getitem__(self, key: str) -> str:
         """ Returns information about the bot depending on a key.  """
-        with open(DAS.INFO_FILE, 'r') as f:
-            return json.load(f)[key]
-
-    @staticmethod
-    def get_atr_settings() -> dict:
-        """ Returns the dictionary mapping guild id to ATR status. """
-        try:
-            with open(DAS.SETTINGS_FILE, 'r') as f:
-                return json.load(f)
-        except FileNotFoundError:
-            return {}
-
-    @staticmethod
-    def edit_atr_settings(new_settings: dict) -> None:
-        """ Updates the JSON file with the new ATR settings. """
-        with open(DAS.SETTINGS_FILE, 'w') as f:
-            json.dump(new_settings, f, indent=2)
+        return read_data_from_json_file(DAS.INFO_FILE)[key]

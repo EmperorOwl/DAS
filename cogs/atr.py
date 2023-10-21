@@ -8,6 +8,7 @@ from discord.ext import commands
 from modules.bot import DAS
 from backend.renderer import render
 from modules.buttons import Buttons, Delete, Confirm
+from modules.utils import read_data_from_json_file, write_data_to_json_file
 
 
 class ATR(commands.Cog):
@@ -20,7 +21,7 @@ class ATR(commands.Cog):
     @app_commands.command()
     async def atr(self, itx: discord.Interaction):
         """ Toggles Automatic TeX Recognition (ATR). """
-        settings = self.bot.get_atr_settings()
+        settings = read_data_from_json_file(self.bot.SETTINGS_FILE)
         try:  # User has toggled before.
             atr = settings[str(itx.guild_id)]['atr']
             if atr:
@@ -41,7 +42,7 @@ class ATR(commands.Cog):
                       f"Try typing `$x^2$`.\n" \
                       f"To learn more, check out " \
                       f"<{self.bot['docs']}/tex-tutorial>"
-        self.bot.edit_atr_settings(settings)
+        write_data_to_json_file(self.bot.SETTINGS_FILE, settings)
         await itx.response.send_message(content)
 
     @commands.Cog.listener()
@@ -59,7 +60,7 @@ class ATR(commands.Cog):
     async def manage_atr(self, msg: discord.Message) -> None:
         """ Performs Automatic Tex Recognition (ATR). """
         if not msg.author.bot and re.search(r'\$(.+)\$', msg.content):
-            settings = self.bot.get_atr_settings()
+            settings = read_data_from_json_file(self.bot.SETTINGS_FILE)
             try:
                 if settings[str(msg.guild.id)]['atr']:
                     try:

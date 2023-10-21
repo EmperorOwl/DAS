@@ -122,6 +122,7 @@ DAS works with Python 3.8 or higher (as [discord.py](https://discordpy.readthedo
       "bot_token": "<Your Discord Bot Token>",
       "topgg_token": null,
       "log_channel": null,
+      "stats_channel": null,
       "test_guild": "<Your Discord Server ID>"
    }
    ```
