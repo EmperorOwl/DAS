@@ -14,6 +14,8 @@ config = read_data_from_json_file(CONFIG_FILE)
 IS_PRODUCTION = config['is_production']
 BOT_TOKEN = config['bot_token']
 TOPGG_TOKEN = config['topgg_token']
+LOG_CHANNEL = config['log_channel']
+STATS_CHANNEL = config['stats_channel']
 TEST_GUILD = config['test_guild']
 RENDERS_PATH = Path(__file__).resolve().parent.parent / "renders"
 
