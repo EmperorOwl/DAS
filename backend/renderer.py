@@ -1,9 +1,10 @@
 """ Code for rendering. """
 
 import matplotlib.pyplot as plt
-from pathlib import Path
 
-FNAME = f'{Path(__file__).parent.parent}/renders/tex.png'
+from modules.bot import RENDERS_PATH
+
+FNAME = f'{RENDERS_PATH}/tex.png'
 DPI = 300
 
 

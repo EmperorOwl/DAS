@@ -6,6 +6,7 @@ import psutil
 import topgg
 import discord
 from discord.ext import commands
+from pathlib import Path
 
 CONFIG_FILE = 'config.json'
 
@@ -15,6 +16,8 @@ with open(CONFIG_FILE, 'r') as file:
     BOT_TOKEN = config['bot_token']
     TOPGG_TOKEN = config['topgg_token']
     TEST_GUILD = config['test_guild']
+
+RENDERS_PATH = Path(__file__).resolve().parent.parent / "renders"
 
 
 class DAS(commands.AutoShardedBot if IS_PRODUCTION else commands.Bot):
@@ -50,6 +53,10 @@ class DAS(commands.AutoShardedBot if IS_PRODUCTION else commands.Bot):
             intents=intents,
             activity=discord.Game(name=self['status'])
         )
+        # Define some attributes to be initialised later.
+        self.topgg_client = None
+        self.start_time = None
+        # Initialise test_guild.
         if IS_PRODUCTION:
             self.test_guild = None
         elif TEST_GUILD is None:
@@ -57,8 +64,9 @@ class DAS(commands.AutoShardedBot if IS_PRODUCTION else commands.Bot):
                              "configuration file")
         else:
             self.test_guild = discord.Object(id=TEST_GUILD)
-        self.topgg_client = None
-        self.start_time = None
+        # Create /renders directory if not already there.
+        if not RENDERS_PATH.exists():
+            RENDERS_PATH.mkdir()
 
     async def setup_hook(self) -> None:
         """ Enables asynchronous setup tasks to be run. """

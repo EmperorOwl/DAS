@@ -7,15 +7,15 @@ References:
 
 import sympy as sp
 import matplotlib.pyplot as plt
-from pathlib import Path
 
 from modules import transform
+from modules.bot import RENDERS_PATH
 
 plt.rcParams['mathtext.fontset'] = 'cm'  # Computer Modern.
 plt.rcParams['font.family'] = 'DejaVu Serif'
 
 X, Y, T = sp.Symbol('x'), sp.Symbol('y'), sp.Symbol('t')
-FNAME = f'{Path(__file__).parent.parent}/renders/plot.png'
+FNAME = f'{RENDERS_PATH}/plot.png'
 DPI = 300
 
 
