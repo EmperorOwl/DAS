@@ -34,7 +34,7 @@ class Limit(typing.NamedTuple):
         (x, _, y) = val.partition(',')
         # Check for valid.
         if y:
-            return cls(lower=int(x.strip()), upper=int(y.strip()))
+            return cls(lower=float(x.strip()), upper=float(y.strip()))
         raise Exception("Invalid Limit")
 
     def __str__(self) -> str:
