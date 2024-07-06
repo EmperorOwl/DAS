@@ -31,6 +31,8 @@ sp_obj = typing.TypeVar('sp_obj')
 
 def parse(expr: str) -> sp_obj:
     """ Converts the string to its equivalent SymPy object. """
+    if len(expr) > 25 or 'import' in expr.lower():
+        raise Exception()
     for old, new in REPLACEMENTS.items():
         expr = expr.replace(old, new)
     return sp.parsing.sympy_parser.parse_expr(expr,
