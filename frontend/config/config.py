@@ -10,4 +10,4 @@ BOT_TOKEN = config['bot_token']
 TOPGG_TOKEN = config['topgg_token']
 LOG_CHANNEL = config['log_channel']
 STATS_CHANNEL = config['stats_channel']
-TEST_GUILD = discord.Object(config['test_guild'])
+TEST_GUILD = discord.Object(config['test_guild']) if config['test_guild'] else None
