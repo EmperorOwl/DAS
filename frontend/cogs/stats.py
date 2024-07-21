@@ -11,7 +11,7 @@ class Stats(commands.Cog):
     """ Represents a collection of development commands. """
     START_DATE = datetime.date(year=2023, month=10, day=21)
     RESET_TIME = datetime.time(hour=0, minute=0, tzinfo=datetime.timezone.utc)
-    STATS_FILE = 'config/stats.json'
+    STATS_FILE = 'frontend/config/stats.json'
     STATS_TEMPLATE = {
         'all_time': {
             'commands': 0,
