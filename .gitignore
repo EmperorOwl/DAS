@@ -1,0 +1,7 @@
+/renders/
+
+/frontend/config/config.json
+/frontend/config/settings.json
+/frontend/config/stats.json
+
+/.idea/
