@@ -5,3 +5,5 @@
 /frontend/config/stats.json
 
 /.idea/
+/venv/
+/__pycache__/
