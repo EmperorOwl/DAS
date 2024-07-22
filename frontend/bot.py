@@ -10,7 +10,7 @@ from frontend.utils import pretty_uptime
 
 class DAS(commands.AutoShardedBot if IS_PRODUCTION else commands.Bot):
     """ Represents the bot DAS. """
-    COGS = ['atr', 'dev', 'error', 'graph', 'maths', 'misc', 'stats']
+    COGS_DIR = 'frontend/cogs'
     ERR_COG = 'Error'
 
     def __init__(self) -> None:
@@ -29,8 +29,11 @@ class DAS(commands.AutoShardedBot if IS_PRODUCTION else commands.Bot):
 
     async def setup_hook(self) -> None:
         """ Enables asynchronous setup tasks to be run. """
-        for cog in self.COGS:
-            await self.load_extension('frontend.cogs.' + cog)
+        # Dynamically load all the cogs.
+        for file in os.listdir(self.COGS_DIR):
+            if not file.startswith('__'):
+                cog = f"frontend.cogs.{file.replace('.py', '')}"
+                await self.load_extension(cog)
         # Set up Topgg client
         if TOPGG_TOKEN:
             self.topgg_client = topgg.DBLClient(
