@@ -16,5 +16,5 @@ jobs:
             cd DAS
             git pull
             source venv/bin/activate
-            pm2 restart frontend/main.py
+            pm2 restart 0
             deactivate

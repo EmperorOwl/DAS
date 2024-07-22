@@ -9,9 +9,9 @@ from frontend.utils import read_data_from_json_file, write_data_to_json_file
 
 class Stats(commands.Cog):
     """ Represents a collection of development commands. """
-    START_DATE = datetime.date(year=2023, month=10, day=21)
+    START_DATE = datetime.date(year=2024, month=7, day=21)
     RESET_TIME = datetime.time(hour=0, minute=0, tzinfo=datetime.timezone.utc)
-    STATS_FILE = 'config/stats.json'
+    STATS_FILE = 'frontend/config/stats.json'
     STATS_TEMPLATE = {
         'all_time': {
             'commands': 0,
@@ -54,16 +54,16 @@ class Stats(commands.Cog):
             graphs = graph_cmds + graph_btns
             total = cmds + btns + graphs
             # Compute percentages
-            cmds_per = int(cmds / total * 100)
-            btns_per = int(btns / total * 100)
-            graphs_per = int(graphs / total * 100)
-            graph_cmds_per = int(graph_cmds / graphs * 100)
-            graph_btns_per = int(graph_btns / graphs * 100)
+            cmds_per = int(cmds / total * 100) if total != 0 else 0
+            btns_per = int(btns / total * 100) if total != 0 else 0
+            graphs_per = int(graphs / total * 100) if total != 0 else 0
+            graph_cmds_per = int(graph_cmds / graphs * 100) if graphs != 0 else 0
+            graph_btns_per = int(graph_btns / graphs * 100) if graphs != 0 else 0
             # Compute average
             if time_period == 'all_time':
                 days = (datetime.date.today() - self.START_DATE).days
-                average = int(total / days)
-                avg_graphs = int(graphs / days)
+                average = int(total / days) if days != 0 else 0
+                avg_graphs = int(graphs / days) if days != 0 else 0
                 embed.description += '\n'
                 embed.description += (f"Current average is {average} "
                                       f"interactions per day, "

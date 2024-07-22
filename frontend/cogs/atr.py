@@ -11,7 +11,7 @@ from frontend.utils import read_data_from_json_file, write_data_to_json_file
 
 class ATR(commands.Cog):
     """ Represents a collection of ATR commands and listeners """
-    SETTINGS_FILE = 'config/settings.json'
+    SETTINGS_FILE = 'frontend/config/settings.json'
 
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_messages=True)
