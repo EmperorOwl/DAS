@@ -15,8 +15,6 @@ class DAS(commands.AutoShardedBot if IS_PRODUCTION else commands.Bot):
 
     def __init__(self) -> None:
         """ Creates an instance of DAS. """
-        if not IS_PRODUCTION and TEST_GUILD is None:
-            raise Exception("test_guild must be defined for dev bot")
         # Set up intents.
         intents = discord.Intents.default()
         intents.message_content = True  # Enables the bot to read messages.
