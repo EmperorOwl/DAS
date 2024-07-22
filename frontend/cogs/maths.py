@@ -6,13 +6,14 @@ from discord.ext import commands
 from backend import calculator
 from frontend.views import Answer
 from frontend.buttons import MultipleGraph, SingleGraph
-from frontend.utils import CharLim1, CharLim25, CharLim50
+from frontend.utils import CharLim1, CharLim25, CharLim50, allow_anywhere
 
 
 class Maths(commands.Cog):
     """ Represents a collection of math commands. """
 
     @app_commands.command()
+    @allow_anywhere
     async def display(self, itx: Interaction, text: CharLim50) -> None:
         """ Renders math text as an image.
 
@@ -25,6 +26,7 @@ class Maths(commands.Cog):
     # SIMPLIFICATION ----------------------------------------------------------
 
     @app_commands.command()
+    @allow_anywhere
     async def expand(self, itx: Interaction, expression: str) -> None:
         """ Expands an expression.
 
@@ -35,6 +37,7 @@ class Maths(commands.Cog):
         await Answer(itx, output_str).send()
 
     @app_commands.command()
+    @allow_anywhere
     async def factor(self, itx: Interaction, expression: CharLim25) -> None:
         """ Factors an expression.
 
@@ -45,6 +48,7 @@ class Maths(commands.Cog):
         await Answer(itx, output_str).send()
 
     @app_commands.command()
+    @allow_anywhere
     async def simplify(self, itx: Interaction, expression: CharLim25) -> None:
         """ Simplifies an expression.
 
@@ -55,6 +59,7 @@ class Maths(commands.Cog):
         await Answer(itx, output_str).send()
 
     @app_commands.command()
+    @allow_anywhere
     async def calculate(self, itx: Interaction, expression: CharLim25) -> None:
         """ Evaluates an expression.
 
@@ -67,6 +72,7 @@ class Maths(commands.Cog):
     # CALCULUS ----------------------------------------------------------------
 
     @app_commands.command()
+    @allow_anywhere
     async def derive(self,
                      itx: Interaction,
                      expression: CharLim25,
@@ -84,6 +90,7 @@ class Maths(commands.Cog):
         await Answer(itx, output_str, btns=[graph_btn]).send()
 
     @app_commands.command()
+    @allow_anywhere
     async def integrate(self,
                         itx: Interaction,
                         expr: CharLim25,
@@ -108,6 +115,7 @@ class Maths(commands.Cog):
         await Answer(itx, output_str, btns=[graph_btn]).send()
 
     @app_commands.command()
+    @allow_anywhere
     async def limit(self,
                     itx: Interaction,
                     expression: CharLim25,
@@ -127,6 +135,7 @@ class Maths(commands.Cog):
     # SOLVERS -----------------------------------------------------------------
 
     @app_commands.command()
+    @allow_anywhere
     async def solve(self,
                     itx: Interaction,
                     equation: CharLim25,
@@ -143,6 +152,7 @@ class Maths(commands.Cog):
         await Answer(itx, output_str).send()
 
     @app_commands.command()
+    @allow_anywhere
     async def linsolve(self,
                        itx: Interaction,
                        eq1: CharLim25,

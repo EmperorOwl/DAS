@@ -8,6 +8,8 @@ from frontend.utils import graph_single_func, graph_multiple_func
 from frontend.utils import CharLim1, CharLim25
 
 
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 class Graph(commands.GroupCog, group_name='graph'):
     """ Represents a collection of graph commands. """
 
