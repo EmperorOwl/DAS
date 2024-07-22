@@ -9,7 +9,7 @@ from frontend.utils import read_data_from_json_file, write_data_to_json_file
 
 class Stats(commands.Cog):
     """ Represents a collection of development commands. """
-    START_DATE = datetime.date(year=2023, month=10, day=21)
+    START_DATE = datetime.date(year=2024, month=7, day=21)
     RESET_TIME = datetime.time(hour=0, minute=0, tzinfo=datetime.timezone.utc)
     STATS_FILE = 'frontend/config/stats.json'
     STATS_TEMPLATE = {
