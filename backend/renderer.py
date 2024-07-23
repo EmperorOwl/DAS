@@ -19,6 +19,7 @@ def _strip(tex: str) -> str:
     tex = tex.replace(r'\middle', '')
     tex = tex.replace(r'\;', '')  # Space
     tex = tex.replace(r'|', r',\;')
+    tex = tex.replace(r'\bmod', r'\; \text{mod} \;')
     return tex
 
 
