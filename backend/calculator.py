@@ -1,115 +1,84 @@
-""" Code for calculating. """
+""" Code for calculating.
 
-import sympy as sp
+Each function returns two strings.
+1. The result of the operation.
+2. The pretty print of the result.
 
-from backend import renderer
-from backend.parser import sp_obj
-
-
-def limit(func: sp_obj, var: str, coord: sp_obj) -> sp_obj:
-    """ Finds the limit of a function at a coordinate. """
-    var = sp.Symbol(var)
-    res = sp.limit(func.expr, var, coord)
-    renderer.render(f"$\\lim_{{{var} \\rightarrow {sp.latex(coord)}}} "
-                    f"({sp.latex(func.expr)}) = {sp.latex(res)}$")
-    return res
+References:
+    https://docs.sympy.org/latest/tutorials/intro-tutorial/simplification.html
+    https://docs.sympy.org/latest/tutorials/intro-tutorial/calculus.html
+    https://docs.sympy.org/latest/tutorials/intro-tutorial/solvers.html
+    https://docs.sympy.org/latest/modules/solvers/solveset.html
+"""
+from backend.operations import *
 
 
-def derive(func: sp_obj, var: str) -> sp_obj:
-    """ Derives a function with respect to a variable. """
-    var = sp.Symbol(var)
-    res = sp.diff(func.expr, var)
-    renderer.render(f"$\\frac{{d}}{{d{var}}} "
-                    f"({sp.latex(func.expr)}) = {sp.latex(res)}$")
-    return res
+def display(text: str) -> (str, str):
+    """ Converts the string text to an image taking into account any tex. """
+    return DisplayOperation(text).execute()
 
 
-def integrate(func: sp_obj,
-              var: str,
-              lt: sp_obj = None,
-              ut: sp_obj = None) -> (sp_obj, sp_obj):
-    """ Integrates a function with respect to a variable. """
-    var = sp.Symbol(var)
-    indefinite = sp.expand(sp.simplify(sp.integrate(func.expr, var)))
-    # If terminals, then evaluate for the definite integral.
-    if lt is not None and ut is not None:
-        definite = sp.integrate(func.expr, (var, lt, ut))
-        renderer.render(f"$\\int_{{{sp.latex(lt)}}}^{{{sp.latex(ut)}}} \\ "
-                        f"({sp.latex(func.expr)}) \\ dx = "
-                        f"{sp.latex(definite)}$")
-    else:
-        definite = None
-        renderer.render(f"$\\int \\ ({sp.latex(func.expr)}) \\ dx "
-                        f"= {sp.latex(indefinite)} + C$")
-    return indefinite, definite
+# ALGEBRA ---------------------------------------------------------------------
+
+def expand(expr: str) -> (str, str):
+    """ Returns the expanded form of the expression expr. """
+    return ExpandOperation(expr).execute()
 
 
-def solve(eq: sp_obj, var: str, dom: str) -> None:
-    """ Solves an equation with respect to a variable and domain. """
-    var = sp.Symbol(var)
-    dom = sp.S.Reals if dom.lower() == 'real' else sp.S.Complexes
-    sols = sp.solveset(eq, var, dom)
-    if type(sols) == sp.sets.sets.EmptySet:  # Equation has no sols.
-        renderer.render("No solution over ℝ")
-    elif type(sols) == sp.sets.fancysets.Reals:  # Equation has infinite sols.
-        renderer.render(f'${var} \\in \\mathbb{{R}}$')
-    else:
-        renderer.render(f"${var} = {sp.latex(sols)}$".replace(
-            '\\left', '').replace(
-            '\\middle', '').replace(
-            '\\right', '').replace(
-            '\\{', '').replace(
-            '\\}', '').replace(
-            ' |', ',')
-        )
+def factor(expr: str) -> (str, str):
+    """ Returns the factored form of the expression expr. """
+    return FactorOperation(expr).execute()
 
 
-def linsolve(eq1: sp_obj, eq2: sp_obj, var1: str, var2: str) -> None:
-    """ Solves a pair of linear equations. """
-    sols = sp.linsolve([eq1, eq2], sp.Symbol(var1), sp.Symbol(var2))
-    if type(sols) == sp.sets.sets.EmptySet:  # Equation has no sols.
-        renderer.render("No solution; the linear system is inconsistent.")
-    else:
-        renderer.render(
-            f"${var1} = {sp.latex(sols.args[0][0])}$, "
-            f"${var2} = {sp.latex(sols.args[0][1])}$".replace(
-                '\\left', '').replace(
-                '\\middle', '').replace(
-                '\\right', '').replace(
-                '\\{', '').replace(
-                '\\}', '').replace(
-                ' |', ',')
-        )
+def simplify(expr: str) -> (str, str):
+    """ Returns the simplified form of the expression expr. """
+    return SimplifyOperation(expr).execute()
 
 
-def expand(expr: sp_obj) -> None:
-    """ Expands the expression. """
-    res = sp.expand(expr)
-    renderer.render(f'${sp.latex(expr)} = {sp.latex(res)}$')
+def evaluate(expr: str) -> (str, str):
+    """ Returns the evaluated form of the expression expr. """
+    return EvaluateOperation(expr).execute()
 
 
-def factor(expr: sp_obj) -> None:
-    """ Factors the expression. """
-    res = sp.factor(expr)
-    renderer.render(f'${sp.latex(expr)} = {sp.latex(res)}$')
+# CALCULUS --------------------------------------------------------------------
+
+def derive(expr: str, var: str) -> (str, str):
+    """ Returns the derivative of the expression expr with respect to the
+    variable var.
+    """
+    return DeriveOperation(expr, var).execute()
 
 
-def simplify(expr: sp_obj) -> None:
-    """ Simplifies the expression. """
-    if expr in [True, False]:
-        res = str(expr)
-        renderer.render(res)
-    else:
-        res = sp.simplify(expr)
-        renderer.render(f'${sp.latex(expr)} = {sp.latex(res)}$')
+def integrate_indefinite(expr: str, var: str) -> (str, str):
+    """ Returns the indefinite integral of the expression expr with respect to
+    the variable var.
+    """
+    return IntegrateIndefiniteOperation(expr, var).execute()
 
 
-def evaluate(expr: sp_obj) -> sp_obj:
-    """ Evaluates the expression. """
-    return expr if expr in [True, False] else expr.evalf()
+def integrate_definite(expr: str, var: str, lt: str, ut: str) -> (str, str):
+    """ Returns the definite integral of the expression expr with respect to
+    the variable var over the interval (lt, ut).
+    """
+    return IntegrateDefiniteOperation(expr, var, lt, ut).execute()
 
 
-def average(nums: str) -> float:
-    """ Calculates the average. """
-    nums = [float(num) for num in nums.split(' ')]
-    return round(sum(nums) / len(nums), 4)
+def limit(expr: str, var: str, val: str) -> (str, str):
+    """ Returns the limit of the expression expr with respect to the variable
+    var at value val.
+    """
+    return LimitOperation(expr, var, val).execute()
+
+
+# SOLVERS ---------------------------------------------------------------------
+
+def solve(eq: str, var: str, dom: str = 'real') -> (str, str):
+    """ Returns the solutions to the solved equation eq for variable var over
+    the domain dom.
+    """
+    return SolveOperation(eq, var, dom).execute()
+
+
+def linsolve(equations: list[str], variables: list[str]) -> (str, str):
+    """ Returns the solution set of the linear system equations. """
+    return LinsolveOperation(equations, variables).execute()
