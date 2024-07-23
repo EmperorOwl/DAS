@@ -52,10 +52,38 @@ class TestSimplification(unittest.TestCase):
         inputs = [
             '1+1',
             'cos(pi)',
+            'sin(90deg)'
         ]
         outputs = [
             '2',
-            '-1'
+            '-1',
+            '1'
         ]
-        outputs = [s + '.' + '0'*14 for s in outputs]
+        outputs = [s + '.' + '0' * 14 for s in outputs]
+        self.run_subtests(inputs, outputs, f=calculator.evaluate)
+
+    def test04(self):
+        """ evaluate - letters"""
+        inputs = [
+            'x',
+            'a*b*c',
+            'a+b'
+        ]
+        outputs = [
+            'x',
+            'abc',
+            'a+b'
+        ]
+        self.run_subtests(inputs, outputs, f=calculator.evaluate)
+
+    def test05(self):
+        """ evaluate - large numbers """
+        inputs = [
+            '99^99',
+            '-1*99^99'
+        ]
+        outputs = [
+            'inf',
+            '-inf'
+        ]
         self.run_subtests(inputs, outputs, f=calculator.evaluate)
