@@ -52,11 +52,13 @@ class TestSimplification(unittest.TestCase):
         inputs = [
             '1+1',
             'cos(pi)',
-            'sin(90deg)'
+            'sin(90deg)',
+            '5 % 2',
         ]
         outputs = [
             '2',
             '-1',
+            '1',
             '1'
         ]
         outputs = [s + '.' + '0' * 14 for s in outputs]
