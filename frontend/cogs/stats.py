@@ -107,6 +107,8 @@ class Stats(commands.Cog):
         """ Listens for interactions, incrementing the stats.
         :param itx: the Discord interaction
         """
+        if itx.user == (await itx.client.application_info()).owner:
+            return  # Don't count bot owner's usage.
         stats = read_data_from_json_file(self.STATS_FILE)
         if not stats:
             stats = self.STATS_TEMPLATE
