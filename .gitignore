@@ -1,0 +1,6 @@
+/bot/data/settings.json
+/bot/data/stats.json
+
+/.idea/
+__pycache__/
+.env

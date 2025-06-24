@@ -1,0 +1,21 @@
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    environment:
+      - GIN_MODE=release
+    restart: unless-stopped
+
+  bot:
+    build:
+      context: ./bot
+      dockerfile: Dockerfile
+    env_file:
+      - ./bot/src/config/.env
+    depends_on:
+      - api
+    restart: unless-stopped
+    volumes:
+      # Sync settings.json and stats.json
+      - ./bot/data:/app/data
