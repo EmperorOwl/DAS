@@ -105,6 +105,12 @@ class Error(commands.Cog):
             err_title = "🚓 Oh no! Permission denied!"
             err_desc = "Try asking a mod for help."
             await ErrorView(itx, err_title, err_desc).send()
+        # Bot does not have the required permissions
+        elif isinstance(error, discord.Forbidden):
+            err_title = "🚓 Oh no! Bot is missing permissions!"
+            err_desc = f"{str(error)}"
+            err_desc += "Please re-invite the bot to the server."
+            await ErrorView(itx, err_title, err_desc).send()
         else:
             await self._handle_uncaught(itx, error)
 

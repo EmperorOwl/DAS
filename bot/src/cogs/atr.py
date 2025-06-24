@@ -1,5 +1,6 @@
 """ Code for handling Automatic Tex Recognition (ATR). """
 import re
+import discord
 from discord import Message, Interaction, app_commands
 from discord.ext import commands
 
@@ -61,9 +62,17 @@ class ATR(commands.Cog):
                     else:
                         await TexRenderSuccess(msg, res['image']).send()
                 else:
-                    pass  # As server has disabled ATR.
+                    pass  # As server has disabled ATR
             except KeyError:
-                pass  # As server has never enabled ATR.
+                pass  # As server has never enabled ATR
+            except discord.Forbidden as error:
+                # Triggers if the permission "Read Message History" is missing
+                errMsg = (f"🚓 Oh no! I am missing some permissions, please "
+                          f"re-invite me to the server.\n"
+                          f"Otherwise, if you would like to disable Automatic "
+                          f"TeX Recognition, type `/atr`.\n"
+                          f"```{str(error)}```")
+                await msg.channel.send(errMsg)
 
 
 async def setup(bot: commands.Bot) -> None:
