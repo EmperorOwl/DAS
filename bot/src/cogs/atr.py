@@ -4,7 +4,7 @@ import discord
 from discord import Message, Interaction, app_commands
 from discord.ext import commands
 
-from src.api import send_request, InputException
+from src.api import send_request
 from src.config import info, SETTINGS_FILE
 from src.views import TexRenderSuccess, TexRenderFail
 from src.utils import read_data_from_json_file, write_data_to_json_file
@@ -57,8 +57,8 @@ class ATR(commands.Cog):
                 if msg.guild and settings[str(msg.guild.id)]['atr']:
                     try:
                         res = await send_request('/display', {'text': text})
-                    except InputException as error:
-                        await TexRenderFail(msg, error.message).send()
+                    except Exception as error:
+                        await TexRenderFail(msg, error).send()
                     else:
                         await TexRenderSuccess(msg, res['image']).send()
                 else:

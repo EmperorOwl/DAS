@@ -5,8 +5,9 @@ async def silent_delete_msg(msg: discord.Message) -> None:
     """ If the message is not found, then no error is raised. """
     try:
         await msg.delete()
-    except discord.errors.NotFound:
-        pass  # As message already deleted
+    except discord.HTTPException:
+        pass  # As message may have already been deleted or bot may have
+        # been kicked or had permissions removed
 
 
 async def silent_delete_ref_msg(channel: 'InteractionChannel',  # type: ignore
@@ -18,5 +19,6 @@ async def silent_delete_ref_msg(channel: 'InteractionChannel',  # type: ignore
                 and msg_ref.message_id):
             ref_msg = await channel.fetch_message(msg_ref.message_id)
             await silent_delete_msg(ref_msg)
-    except discord.errors.NotFound:
-        pass  # As message already deleted
+    except discord.HTTPException:
+        pass  # As message may have already been deleted or bot may have
+        # been kicked or had permissions removed
