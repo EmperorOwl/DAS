@@ -20,7 +20,12 @@ class Delete(discord.ui.Button):
         if self.view is None:
             raise ValueError("Button is not attached to a view")
         if itx.message:
-            await silent_delete_msg(itx.message)
+            # Don't delete itx.message as it will raise 403 Forbidden in DMs
+            # I think self.view.msg works because it is an InteractionMessage,
+            # while itx.message is a Message
+            # self.view.msg can be Message though, e.g. for ATR but
+            # ATR is not applicable in DMs so we are fine for now
+            await silent_delete_msg(self.view.msg)
             if (self.del_ref_msg and itx.channel and itx.message.reference):
                 await silent_delete_ref_msg(itx.channel, itx.message.reference)
         self.view.stop()

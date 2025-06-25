@@ -44,6 +44,13 @@ class Dev(commands.Cog):
         _ = await ctx.bot.tree.sync(guild=TEST_GUILD)
         await self._send(ctx)
 
+    @commands.command(name="global")
+    @commands.is_owner()
+    async def sync_global(self, ctx: commands.Context) -> None:
+        """ Syncs the bot's slash commands with the Discord API. """
+        _ = await ctx.bot.tree.sync()
+        await ctx.send("Synced commands globally.")
+
     @commands.command()
     @commands.is_owner()
     async def clear(self, ctx: commands.Context) -> None:
