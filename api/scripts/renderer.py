@@ -5,6 +5,7 @@ from typing import Any
 
 import matplotlib
 import matplotlib.pyplot as plt
+import warnings
 # from sympy.plotting.plot import Plot, MatplotlibBackend
 
 TEX_DPI = 300
@@ -13,6 +14,7 @@ PLOT_DPI = 300
 matplotlib.use('agg')  # Non-interactive backend
 plt.rcParams['mathtext.fontset'] = 'cm'  # Computer Modern
 plt.rcParams['font.family'] = 'DejaVu Serif'
+warnings.filterwarnings('ignore', category=UserWarning)  # Suppress warnings
 
 
 def _strip(tex: str) -> str:
@@ -58,7 +60,7 @@ def render_plot(plot: Any, legend: list[str]) -> str:
     try:
         plot.process_series()
         plot.ax.grid(True, linestyle=':')
-        plot.fig.legend(legend)
+        plot.fig.legend([_strip(item) for item in legend])
         plot.fig.savefig(buf, format='png', dpi=PLOT_DPI)
         buf.seek(0)
     finally:

@@ -130,20 +130,6 @@ func TestInvalidInput(t *testing.T) {
 			},
 			expectedStatus: http.StatusBadRequest,
 		},
-		// {
-		// 	name:     "matplotlib warning causes server error",
-		// 	endpoint: "/graph-expr-single",
-		// 	args: map[string]interface{}{
-		// 		"expr": "2",
-		// 		"dom":  "[-2,2]",
-		// 		"ran":  "[-2,2]",
-		// 	},
-		// 	expectedResponse: map[string]interface{}{
-		// 		"name":    "ParsingError",
-		// 		"message": "invalid input",
-		// 	},
-		// 	expectedStatus: http.StatusBadRequest,
-		// },
 	}
 
 	for _, tc := range tests {
@@ -675,7 +661,7 @@ func TestGraphFuncSingleEndpoint(t *testing.T) {
 		expectedStatus int
 	}{
 		{
-			name: "Graph simple function",
+			name: "Parabola",
 			args: map[string]interface{}{
 				"func": "x^2",
 				"var":  "x",
@@ -685,7 +671,7 @@ func TestGraphFuncSingleEndpoint(t *testing.T) {
 			expectedStatus: http.StatusOK,
 		},
 		{
-			name: "Graph trigonometric function",
+			name: "Sine wave",
 			args: map[string]interface{}{
 				"func": "sin(x)",
 				"var":  "x",
@@ -700,6 +686,16 @@ func TestGraphFuncSingleEndpoint(t *testing.T) {
 				"func": "sin(x)",
 				"var":  "x",
 				"dom":  "[-1,1]",
+			},
+			expectedStatus: http.StatusOK,
+		},
+		{
+			name: "Graph with modulo",
+			args: map[string]interface{}{
+				"func": "x + 2 % 5",
+				"var":  "x",
+				"dom":  "[-5,5]",
+				"ran":  "[-5,5]",
 			},
 			expectedStatus: http.StatusOK,
 		},
@@ -913,16 +909,42 @@ func TestGraphExprSingleEndpoint(t *testing.T) {
 		expectedStatus int
 	}{
 		{
-			name: "Graph simple 3D expression",
+			name: "Pouch",
 			args: map[string]interface{}{
 				"expr": "x^2 + y^2",
-				"dom":  "[-2,2]",
-				"ran":  "[-2,2]",
+				"dom":  "[-5,5]",
+				"ran":  "[-5,5]",
+			},
+			expectedStatus: http.StatusOK,
+		},
+		{
+			name: "Line",
+			args: map[string]interface{}{
+				"expr": "2x",
+				"dom":  "[-5,5]",
+				"ran":  "[-5,5]",
+			},
+			expectedStatus: http.StatusOK,
+		},
+		{
+			name: "Flat",
+			args: map[string]interface{}{
+				"expr": "2",
+				"dom":  "[-5,5]",
+				"ran":  "[-5,5]",
+			},
+			expectedStatus: http.StatusOK,
+		},
+		{
+			name: "Complex Trig",
+			args: map[string]interface{}{
+				"expr": "sin(xy)",
+				"dom":  "[-5,5]",
+				"ran":  "[-5,5]",
 			},
 			expectedStatus: http.StatusOK,
 		},
 	}
-
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			runEndpointTest(t, router, "POST", "/graph-expr-single", tc.args, tc.expectedStatus, nil)

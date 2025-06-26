@@ -56,7 +56,8 @@ def _parse(s: str,
         '÷': '/',
         '–': '-',
         '°': '*(pi/180)',
-        'deg': '*(pi/180)'
+        'deg': '*(pi/180)',
+        'mod': 'Mod',
     }
     for old, new in REPLACEMENTS.items():
         s = s.replace(old, new)
