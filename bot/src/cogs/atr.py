@@ -67,12 +67,15 @@ class ATR(commands.Cog):
                 pass  # As server has never enabled ATR
             except discord.Forbidden as error:
                 # Triggers if the permission "Read Message History" is missing
-                errMsg = (f"🚓 Oh no! I am missing some permissions, please "
-                          f"re-invite me to the server.\n"
-                          f"Otherwise, if you would like to disable Automatic "
-                          f"TeX Recognition, type `/atr`.\n"
-                          f"```{str(error)}```")
-                await msg.channel.send(errMsg)
+                try:
+                    errMsg = (f"🚓 Oh no! I am missing some permissions, "
+                              f"please re-invite me to the server.\n"
+                              f"Otherwise, if you would like to disable "
+                              f"Automatic TeX Recognition, type `/atr`.\n"
+                              f"```{error}```")
+                    await msg.channel.send(errMsg)
+                except discord.Forbidden:
+                    pass  # Don't have permission to send messages
 
 
 async def setup(bot: commands.Bot) -> None:
