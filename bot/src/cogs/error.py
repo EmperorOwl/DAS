@@ -80,8 +80,9 @@ class Error(commands.Cog):
             # Command took too long
             if isinstance(err, TimeoutException):
                 err_title = "🤯 Oof! Something's too big!"
-                err_desc = ("For efficiency purposes, DAS can't handle requests "
-                            "with super large or super small numbers.")
+                err_desc = ("Your request timed out. For efficiency purposes, "
+                            "DAS can't handle requests with super large or "
+                            "super small numbers.")
                 await ErrorView(itx, err_title, err_desc).send()
             # User input was incorrect
             elif isinstance(err, InputException):
