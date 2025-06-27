@@ -26,7 +26,8 @@ class View(ABC, discord.ui.View):
         """ Removes the buttons from this view on timeout. """
         try:
             await self.msg.edit(view=self.clear_items())  # type: ignore
-        except discord.errors.NotFound:
-            pass  # As message may have already been deleted.
+        except discord.HTTPException:
+            pass  # As message may have already been deleted or bot may have
+            # been kicked or had permissions removed
         finally:
             self.stop()
