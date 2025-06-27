@@ -20,48 +20,71 @@ class TestCalculus(unittest.TestCase):
                 self.assertEqual(expected, result.answer)
 
     def test_derive(self):
-        arg_names = ["expr", "var"]
+        arg_names = ["expr", "vars"]
         tests = [
             # Basic derivatives
-            (("x^2", "x"), "2x"),
-            (("x^3", "x"), "3x^2"),
-            # (("x^n", "x"), "n*x**(n - 1)"),
+            (("x^2", ["x"]), "2x"),
+            (("x^3", ["x"]), "3x^2"),
+            (("x^n", ["x"]), "nx^n/x"),
 
             # Trigonometric
-            (("sin(x)", "x"), "cos(x)"),
-            (("cos(x)", "x"), "-sin(x)"),
-            (("tan(x)", "x"), "tan(x)^2+1"),  # sec(x)^2
-            (("sec(x)", "x"), "tan(x)sec(x)"),
-            (("csc(x)", "x"), "-cot(x)csc(x)"),
-            (("cot(x)", "x"), "-cot(x)^2-1"),
+            (("sin(x)", ["x"]), "cos(x)"),
+            (("cos(x)", ["x"]), "-sin(x)"),
+            (("tan(x)", ["x"]), "tan(x)^2+1"),  # sec(x)^2
+            (("sec(x)", ["x"]), "tan(x)sec(x)"),
+            (("csc(x)", ["x"]), "-cot(x)csc(x)"),
+            (("cot(x)", ["x"]), "-cot(x)^2-1"),
 
             # Exponential and logarithmic
-            (("e^x", "x"), "e^x"),
-            (("a^x", "x"), "a^xlog(a)"),
-            (("log(x)", "x"), "1/x"),
-            (("ln(x)", "x"), "1/x"),
+            (("e^x", ["x"]), "exp(x)"),
+            (("a^x", ["x"]), "a^xlog(a)"),
+            (("log(x)", ["x"]), "1/x"),
+            (("ln(x)", ["x"]), "1/x"),
 
             # Multiple variables
-            (("x^2 + y^2", "x"), "2x"),
-            (("x^2 + y^2", "y"), "2y"),
-            (("x*y", "x"), "y"),
-            (("x*y", "y"), "x"),
+            (("x^2 + y^2", ["x"]), "2x"),
+            (("x^2 + y^2", ["y"]), "2y"),
+            (("x*y", ["x"]), "y"),
+            (("x*y", ["y"]), "x"),
 
             # Chain rule
-            (("sin(x^2)", "x"), "2xcos(x^2)"),
-            (("e^(x^2)", "x"), "2xexp(x^2)"),
-            (("log(sin(x))", "x"), "cos(x)/sin(x)"),
+            (("sin(x^2)", ["x"]), "2xcos(x^2)"),
+            (("e^(x^2)", ["x"]), "2xexp(x^2)"),
+            (("log(sin(x))", ["x"]), "cos(x)/sin(x)"),
 
             # Product rule
-            (("x*sin(x)", "x"), "xcos(x)+sin(x)"),
-            (("x*e^x", "x"), "xexp(x)+e^x"),
+            (("x*sin(x)", ["x"]), "xcos(x)+sin(x)"),
+            (("x*e^x", ["x"]), "xexp(x)+exp(x)"),
 
             # Quotient rule
-            (("sin(x)/x", "x"), "cos(x)/x-sin(x)/x^2"),
-            (("x/log(x)", "x"), "1/log(x)-1/log(x)^2"),
+            (("sin(x)/x", ["x"]), "cos(x)/x-sin(x)/x^2"),
+            (("x/log(x)", ["x"]), "1/log(x)-1/log(x)^2"),
 
-            # Higher order derivatives (implicit)
-            # (("x^3 + y^3 = 1", "x"), "-x**2/y**2"),
+            # Higher order derivatives
+            (("x^2 + y^2", ["x", "y"]), "0"),
+            (("x^2 + y^2", ["y", "x"]), "0"),
+            (("x^3*y^2", ["x", "y"]), "6x^2y"),
+            (("x^3*y^2", ["y", "x"]), "6x^2y"),
+            (("x^2*y^3", ["x", "x"]), "2y^3"),
+            (("x^2*y^3", ["y", "y"]), "6x^2y"),
+            (("sin(x*y)", ["x", "y"]), "-xysin(xy)+cos(xy)"),
+            (("e^(x*y)", ["x", "y"]), "(xy+1)exp(xy)"),
+
+            # Second variable missing
+            (("x^2 + y^2", ["x"]), "2x"),
+            (("x^2 + y^2", ["y"]), "2y"),
+
+            # Three variable derivatives
+            (("x^2*y*z", ["x", "y", "z"]), "2x"),
+            (("x*y^2*z^3", ["x", "y", "z"]), "6yz^2"),
+            (("sin(x*y*z)", ["x", "y", "z"]),
+             "-x^2y^2z^2cos(xyz)-3xyzsin(xyz)+cos(xyz)"),
+            (("e^(x*y*z)", ["x", "y", "z"]), "(x^2y^2z^2+3xyz+1)exp(xyz)"),
+
+            # Second derivative
+            (("x^2", ["x", "x"]), "2"),
+            (("x^3*y^2*z", ["x", "x", "y"]), "12xyz"),
+            (("x*y*z^2", ["z", "z", "x"]), "2y"),
         ]
         self.run_subtests(derive_expression, tests, arg_names)
 

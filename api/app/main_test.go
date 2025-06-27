@@ -281,14 +281,32 @@ func TestDeriveEndpoint(t *testing.T) {
 		expectedStatus   int
 	}{
 		{
-			name: "Derive valid expression",
-			args: map[string]interface{}{"expr": "x^2", "var": "x"},
+			name: "Single variable",
+			args: map[string]interface{}{
+				"expr": "x^2",
+				"vars": []interface{}{"x"},
+			},
 			expectedResponse: map[string]interface{}{
 				"pretty": map[string]interface{}{
 					"expr": "x^2",
-					"var":  "x",
+					"vars": []interface{}{"x"},
 				},
 				"answer": "2x",
+			},
+			expectedStatus: http.StatusOK,
+		},
+		{
+			name: "Two variables",
+			args: map[string]interface{}{
+				"expr": "x^3*y^2",
+				"vars": []interface{}{"x", "y"},
+			},
+			expectedResponse: map[string]interface{}{
+				"pretty": map[string]interface{}{
+					"expr": "x^3y^2",
+					"vars": []interface{}{"x", "y"},
+				},
+				"answer": "6x^2y",
 			},
 			expectedStatus: http.StatusOK,
 		},

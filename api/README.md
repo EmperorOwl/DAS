@@ -34,6 +34,7 @@ The API requires:
     ```
     clear; python -m scripts.tests.run_tests
     clear; python -m scripts.tests.test_algebra
+    clear; python -m unittest scripts.tests.test_calculus.TestCalculus.test_derive
     ```
 
 ### Integration Tests

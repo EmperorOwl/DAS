@@ -9,19 +9,16 @@ from scripts.utils import Result, Error, Response
 def derive_expression(args: dict) -> Response:
     try:
         raw_expr = args['expr']
-        raw_var = args['var']
+        raw_vars = args['vars']
         expr = parse_expr(raw_expr)
-        var = parse_var(raw_var)
-        res = sp.diff(expr, var)
+        vars = [parse_var(raw_var) for raw_var in raw_vars]
+        unevaluated = sp.Derivative(expr, *vars)
+        res = unevaluated.doit()
         pretty = {
             "expr": make_pretty(expr),
-            "var": make_pretty(var)
+            "vars": [make_pretty(var) for var in vars]
         }
-        image = render_tex("$"
-                           f"\\frac{{d}}{{d{var}}} "
-                           f"({sp.latex(expr)}) = "
-                           f"{sp.latex(res)}"
-                           "$")
+        image = render_tex(f"${sp.latex(unevaluated)} = {sp.latex(res)}$")
         answer = make_pretty(res)
         return Result(pretty, image, answer)
     except Exception as e:

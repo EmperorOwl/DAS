@@ -44,7 +44,7 @@ class Dev(commands.Cog):
         _ = await ctx.bot.tree.sync(guild=TEST_GUILD)
         await self._send(ctx)
 
-    @commands.command(name="global")
+    @commands.command(name="sync-global")
     @commands.is_owner()
     async def sync_global(self, ctx: commands.Context) -> None:
         """ Syncs the bot's slash commands with the Discord API. """
@@ -58,6 +58,14 @@ class Dev(commands.Cog):
         ctx.bot.tree.clear_commands(guild=TEST_GUILD)
         _ = await ctx.bot.tree.sync(guild=TEST_GUILD)
         await self._send(ctx)
+
+    @commands.command(name="clear-global")
+    @commands.is_owner()
+    async def clear_global(self, ctx: commands.Context) -> None:
+        """ Clears the bot's slash commands with the Discord API. """
+        ctx.bot.tree.clear_commands(guild=None)
+        _ = await ctx.bot.tree.sync(guild=None)
+        await ctx.send("Cleared commands globally.")
 
     @commands.command()
     @commands.is_owner()

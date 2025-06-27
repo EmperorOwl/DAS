@@ -87,22 +87,28 @@ class Maths(commands.Cog):
     @allow_anywhere
     async def derive(self,
                      itx: Interaction,
-                     expression: CharLim50,
-                     variable: CharLim1) -> None:
-        """ Derives an expression with respect to a variable.
+                     expr: CharLim50,
+                     var1: CharLim1,
+                     var2: CharLim1 | None = None,
+                     var3: CharLim1 | None = None) -> None:
+        """ Derives an expression with respect to one or more variables.
 
         :param itx: the Discord interaction
-        :param expression: the expression to derive, e.g. x^2
-        :param variable: the variable to derive with respect to, e.g. x
+        :param expr: the expression to derive, e.g. x^2
+        :param var1: the variable to derive with respect to, e.g. x
+        :param var2: the second variable to derive with respect to, e.g. y
+        :param var3: the third variable to derive with respect to, e.g. z
         """
-        res = await send_request('/derive', {'expr': expression,
-                                             'var': variable})
+        vars = [var for var in [var1, var2, var3] if var is not None]
+        res = await send_request('/derive', {'expr': expr, 'vars': vars})
         out = (f"Original: `{res['pretty']['expr']}`\n"
                f"Derivative: `{res['answer']}`")
-        btn = MultipleGraph(f"f({variable})={res['pretty']['expr']}",
-                            f"f'({variable})={res['answer']}",
-                            variable)
-        await Answer(itx, out, res['image'], btns=[btn]).send()
+        btns = []
+        if len(vars) == 1:
+            btns.append(MultipleGraph(f"f({var1})={res['pretty']['expr']}",
+                                      f"f'({var1})={res['answer']}",
+                                      var1))
+        await Answer(itx, out, res['image'], btns).send()
 
     @app_commands.command()
     @allow_anywhere
