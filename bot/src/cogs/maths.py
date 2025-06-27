@@ -38,6 +38,8 @@ class Maths(commands.Cog):
         res = await send_request('/evaluate', {'expr': expression})
         out = (f"Expression: `{res['pretty']['expr']}`\n"
                f"Evaluated: `{res['answer']}`")
+        if 'humanized_res' in res['pretty']:
+            out += f"\nHumanized: `{res['pretty']['humanized_res']}`\n"
         await Answer(itx, out, res['image']).send()
 
     @app_commands.command()

@@ -82,13 +82,20 @@ class TestAlgebra(unittest.TestCase):
             # Decimal precision
             ("sqrt(2)", "1.4142135623730951"),
 
+            # Too big or too small
+            ("10^36", "oo"),
+            ("-10^36", "-oo"),
+            ("10^(-36)", "0"),
+            ("-10^(-36)", "0"),
+
             # Already evaluated
             ("1", "1"),
             ("1.0", "1"),
             ("2.1", "2.1"),
 
             # Variable
-            ("x + 1", "x+1.0"),
+            ("x + 1", "x+1"),
+            ("a + b + c", "a+b+c"),
         ]
         self.run_subtests(evaluate_expression, tests)
 
