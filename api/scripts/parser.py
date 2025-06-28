@@ -36,8 +36,13 @@ def _parse(s: str,
     if '|' in s:
         raise ParsingError("Please use abs(x) instead of |x|")
     # Power
+    for i, digit in enumerate(['²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']):
+        if digit in s:
+            raise ParsingError(f"Please use ^{i+2} instead of {digit}")
     if 'squared' in s.lower():
         raise ParsingError("Please use ^2 instead of squared")
+    if 'cubed' in s.lower():
+        raise ParsingError("Please use ^3 instead of cubed")
     # Square root
     if '√' in s or 'square root' in s.lower():
         raise ParsingError("Please use sqrt(x) or root(x, 2) "
@@ -98,7 +103,13 @@ def _parse(s: str,
         if '.' in s:
             raise ParsingError(f"Please use * instead of .")
         raise ParsingError(f"{s} is invalid")
-    except (SyntaxError, TypeError):
+    except TypeError:
+        if 'root' in s.lower():
+            raise ParsingError("root() requires 2 arguments\n"
+                               "root(n, k) returns the kth root of n\n"
+                               "e.g. root(8, 3) returns the cube root of 8")
+        raise ParsingError(f"{s} is invalid")
+    except SyntaxError:
         raise ParsingError(f"{s} is invalid")
 
 
