@@ -17,10 +17,10 @@ def evaluate_expression(args: dict) -> Response:
         try:
             # Integer result
             res = int(res) if float(res).is_integer() else float(res)
-            # Humanized notation
+            # Humanized and scientific notation
             if 10**6 <= abs(res) <= 10**35:
-                humanized_res = humanize.intword(res, format="%.3g")
-                pretty['humanized_res'] = humanized_res
+                pretty['scientific_res'] = f"{res:.1e}"
+                pretty['humanized_res'] = humanize.intword(res, format="%.3g")
             # Result too large
             elif abs(res) > 10**35:
                 res = sp.oo if res > 0 else -sp.oo

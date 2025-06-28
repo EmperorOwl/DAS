@@ -7,6 +7,7 @@ References:
 import re
 import sympy as sp
 from sympy.parsing import sympy_parser
+from tokenize import TokenError
 
 from scripts.utils import Func, Limit
 
@@ -34,6 +35,8 @@ def _parse(s: str,
     # Check for correct syntax for brackets
     if '{' in s or '}' in s:
         raise ParsingError(f"Please use () instead of {{}}")
+    if '[' in s or ']' in s:
+        raise ParsingError(f"Please use () instead of []")
     # Update local dict
     CONVERSIONS = {
         'e': sp.E,
@@ -79,7 +82,7 @@ def _parse(s: str,
                                            local_dict=local_dict,
                                            transformations=transformations,
                                            evaluate=evaluate)
-    except SyntaxError | AttributeError:
+    except (SyntaxError, AttributeError, TypeError, TokenError):
         raise ParsingError(f"{s} is invalid")
 
 
@@ -87,10 +90,9 @@ def parse_expr(s: str,
                local_dict: dict | None = None,
                evaluate: bool = False) -> sp.Expr:
     """ Converts the string s to a SymPy expression object. """
-    try:
-        res = _parse(s, local_dict, evaluate)
-    except TypeError:
-        raise ParsingError(f"{s} is not an expression")
+    if '=' in s:
+        raise ParsingError("Do not use = in expressions")
+    res = _parse(s, local_dict, evaluate)
     if not isinstance(res, sp.Expr):
         raise ParsingError(f"{s} is not an expression")
     return res

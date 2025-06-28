@@ -113,7 +113,7 @@ func TestInvalidInput(t *testing.T) {
 			args:     map[string]interface{}{"expr": "1+"},
 			expectedResponse: map[string]interface{}{
 				"name":    "ParsingError",
-				"message": "Input is invalid",
+				"message": "1+ is invalid",
 			},
 			expectedStatus: http.StatusBadRequest,
 		},
