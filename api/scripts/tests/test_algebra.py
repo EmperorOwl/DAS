@@ -93,6 +93,10 @@ class TestAlgebra(unittest.TestCase):
             ("1.0", "1"),
             ("2.1", "2.1"),
 
+            # Humanised input
+            ("1 million + 2 billion", "2001000000"),
+            ("1million + 21 million", "22000000"),
+
             # Variable
             ("x + 1", "x+1"),
             ("a + b + c", "a+b+c"),

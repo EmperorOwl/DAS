@@ -54,6 +54,7 @@ class TestParser(unittest.TestCase):
             ("sin(90°)", "sin(90*pi/180)"),
             ("cos(180deg)", "cos(180*pi/180)"),
             ("x⋅y÷z–w", "-w + x*y/z"),
+            ("1 billion", "1*10**9"),
 
             # Implicit multiplication / split symbols
             ("2x", "2*x"),

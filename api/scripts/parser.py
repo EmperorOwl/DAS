@@ -27,7 +27,7 @@ def _parse(s: str,
     BANNED = ['_', 'import', 'config', 'eval', 'py', 'echo', '!!!', '$']
     for banned in BANNED:
         if banned in s.lower():
-            raise ParsingError(f"Input is invalid")
+            raise ParsingError(f"{s} is invalid")
     # Check for correct syntax for absolute value
     if '|' in s:
         raise ParsingError(f"Please use abs(x) instead of |x|")
@@ -58,6 +58,16 @@ def _parse(s: str,
         '°': '*(pi/180)',
         'deg': '*(pi/180)',
         'mod': 'Mod',
+        'million': '*(10^6)',
+        'billion': '*(10^9)',
+        'trillion': '*(10^12)',
+        'quadrillion': '*(10^15)',
+        'quintillion': '*(10^18)',
+        'sextillion': '*(10^21)',
+        'septillion': '*(10^24)',
+        'octillion': '*(10^27)',
+        'nonillion': '*(10^30)',
+        'decillion': '*(10^33)',
     }
     for old, new in REPLACEMENTS.items():
         s = s.replace(old, new)
@@ -69,8 +79,8 @@ def _parse(s: str,
                                            local_dict=local_dict,
                                            transformations=transformations,
                                            evaluate=evaluate)
-    except SyntaxError:
-        raise ParsingError("Input is invalid")
+    except SyntaxError | AttributeError:
+        raise ParsingError(f"{s} is invalid")
 
 
 def parse_expr(s: str,
