@@ -144,9 +144,9 @@ class TestCalculus(unittest.TestCase):
             (("csc(x)^2", "x"), "-cos(x)/sin(x)"),
 
             # Exponential
-            (("e^x", "x"), "e^x"),
+            (("e^x", "x"), "exp(x)"),
             (("e^(-x)", "x"), "-exp(-x)"),
-            # (("a^x", "x"), "a**x/log(a)"),
+            # (("a^x", "x"), "a**x/log(a)"),  # Has rendering issues
 
             # Logarithmic
             (("1/x", "x"), "log(x)"),
@@ -162,7 +162,7 @@ class TestCalculus(unittest.TestCase):
 
             # Chain rule
             (("sin(x^2)*2*x", "x"), "-cos(x^2)"),
-            (("e^(x^2)*2*x", "x"), "e^(x^2)"),
+            (("e^(x^2)*2*x", "x"), "exp(x^2)"),
 
             # Product rule
             (("x*sin(x)", "x"), "-xcos(x)+sin(x)"),

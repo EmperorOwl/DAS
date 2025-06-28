@@ -12,16 +12,15 @@ def integrate_indefinite_expression(args: dict) -> Response:
         raw_var = args['var']
         expr = parse_expr(raw_expr)
         var = parse_var(raw_var)
-        res = sp.integrate(expr, var)
+        unevaluated = sp.Integral(expr, var)
+        res = unevaluated.doit()
         pretty = {
             "expr": make_pretty(expr),
             "var": make_pretty(var)
         }
-        image = render_tex("$"
-                           f"\\int \\ ({sp.latex(expr)}) \\ "
-                           f"{{d{var}}} = "
-                           f"{sp.latex(res)} + C"
-                           "$")
+        tex = f"${sp.latex(unevaluated)} = {sp.latex(res)} + C$"
+        tex = tex.replace(r'\int', r'\int \; \;')  # Add two spaces
+        image = render_tex(tex)
         answer = make_pretty(res)
         return Result(pretty, image, answer)
     except Exception as e:

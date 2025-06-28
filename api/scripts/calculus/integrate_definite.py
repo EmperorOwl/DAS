@@ -16,20 +16,15 @@ def integrate_definite_expression(args: dict) -> Response:
         var = parse_var(raw_var)
         lt = parse_expr(raw_lt)
         ut = parse_expr(raw_ut)
-        res = sp.integrate(expr, (var, lt, ut))
+        unevaluated = sp.Integral(expr, (var, lt, ut))
+        res = unevaluated.doit()
         pretty = {
             "expr": make_pretty(expr),
             "var": make_pretty(var),
             "lt": make_pretty(lt),
             "ut": make_pretty(ut)
         }
-        image = render_tex("$"
-                           f"\\int_{{{sp.latex(lt)}}}^"
-                           f"{{{sp.latex(ut)}}} \\ "
-                           f"({sp.latex(expr)}) \\ "
-                           f"{{d{var}}} = "
-                           f"{sp.latex(res)}"
-                           "$")
+        image = render_tex(f"${sp.latex(unevaluated)} = {sp.latex(res)}$")
         answer = make_pretty(res)
         return Result(pretty, image, answer)
     except Exception as e:

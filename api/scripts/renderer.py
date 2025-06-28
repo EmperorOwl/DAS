@@ -18,13 +18,20 @@ warnings.filterwarnings('ignore', category=UserWarning)  # Suppress warnings
 
 
 def _strip(tex: str) -> str:
-    """ Removes some unnecessary latex symbols. """
-    tex = tex.replace(r'\left\{', '')
-    tex = tex.replace(r'\right\}', '')
-    tex = tex.replace(r'\middle', '')
-    tex = tex.replace(r'\;', '')  # Space
-    tex = tex.replace(r'|', r',\;')
-    tex = tex.replace(r'\bmod', r'\; \text{mod} \;')
+    """ Removes some latex symbols and replaces some symbols to be
+    compatible with the Matplotlib mathtext renderer.
+    """
+    # print(tex)
+    STRIP = [r'\left\{',
+             r'\right\}',
+             r'\middle',
+             r'\limit']
+    for char in STRIP:
+        tex = tex.replace(char, '')
+    REPLACEMENTS = [(r'\bmod', r'\; \text{mod} \;'),  # Modulo symbol
+                    (r'\ints', r'\int')]  # Integral symbol
+    for old, new in REPLACEMENTS:
+        tex = tex.replace(old, new)
     return tex
 
 
