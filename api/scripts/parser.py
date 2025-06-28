@@ -168,3 +168,10 @@ def parse_dom(s: str) -> sp.Set:
     elif s.lower() == 'complex':
         return sp.Complexes
     raise ParsingError(f'{s} is not a valid domain')
+
+
+def parse_dir(s: str) -> str:
+    """ Converts the string s to a direction. """
+    if s not in ['+', '-', '+-']:
+        raise ParsingError(f'{s} is not a valid direction')
+    return s

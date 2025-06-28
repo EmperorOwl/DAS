@@ -130,6 +130,21 @@ func TestInvalidInput(t *testing.T) {
 			},
 			expectedStatus: http.StatusBadRequest,
 		},
+		{
+			name:     "Invalid limit value",
+			endpoint: "/limit",
+			args: map[string]interface{}{
+				"expr": "x^2",
+				"var":  "x",
+				"val":  "x",
+				"dir":  "+",
+			},
+			expectedResponse: map[string]interface{}{
+				"name":    "NotImplementedError",
+				"message": "Limits approaching a variable point are not supported (x -> x)",
+			},
+			expectedStatus: http.StatusBadRequest,
+		},
 	}
 
 	for _, tc := range tests {
@@ -407,12 +422,14 @@ func TestLimitEndpoint(t *testing.T) {
 				"expr": "x^2",
 				"var":  "x",
 				"val":  "0",
+				"dir":  "+",
 			},
 			expectedResponse: map[string]interface{}{
 				"pretty": map[string]interface{}{
 					"expr": "x^2",
 					"var":  "x",
 					"val":  "0",
+					"dir":  "+",
 				},
 				"answer": "0",
 			},

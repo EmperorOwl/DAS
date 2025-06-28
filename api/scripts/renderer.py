@@ -21,7 +21,6 @@ def _strip(tex: str) -> str:
     """ Removes some latex symbols and replaces some symbols to be
     compatible with the Matplotlib mathtext renderer.
     """
-    # print(tex)
     STRIP = [r'\left\{',
              r'\right\}',
              r'\middle',

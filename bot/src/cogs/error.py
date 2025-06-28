@@ -86,7 +86,9 @@ class Error(commands.Cog):
                 await ErrorView(itx, err_title, err_desc).send()
             # User input was incorrect
             elif isinstance(err, InputException):
-                if err.name in ['ParsingError', 'SyntaxError']:
+                if err.name in ['ParsingError',
+                                'SyntaxError',
+                                'NotImplementedError']:
                     err_title = "☹️ Uh oh! Something's not right!"
                     err_desc = (f"Looks like there was a `{err.name}`.\n"
                                 f"```{err.message}```")

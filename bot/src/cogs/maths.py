@@ -149,18 +149,22 @@ class Maths(commands.Cog):
                     itx: Interaction,
                     expression: CharLim50,
                     variable: CharLim1,
-                    coordinate: CharLim50) -> None:
+                    coordinate: CharLim50,
+                    direction: Literal['+', '-', '+-'] = '+-') -> None:
         """ Finds the limit of an expression at a coordinate.
 
         :param itx: the Discord interaction
         :param expression: the expression to use, e.g. e^x
         :param variable: the variable to use, e.g. x
         :param coordinate: the coordinate to use (type oo for infinity)
+        :param direction: the direction to use (default: +-)
         """
         res = await send_request('/limit', {'expr': expression,
                                             'var': variable,
-                                            'val': coordinate})
-        out = f"Limit: `{res['answer']}`"
+                                            'val': coordinate,
+                                            'dir': direction})
+        out = (f"Original: `{res['pretty']['expr']}`\n"
+               f"Limit: `{res['answer']}`")
         btn = SingleGraph(expression, variable)
         await Answer(itx, out, res['image'], btns=[btn]).send()
 

@@ -19,7 +19,8 @@ def _neaten(s: str) -> str:
                     ('I', 'i'),
                     ('-1*', '-'),
                     ('(-1)*', '-'),
-                    ('Mod', 'mod')]
+                    ('Mod', 'mod'),
+                    ('Abs', 'abs')]
     for old, new in REPLACEMENTS:
         s = s.replace(old, new)
 
