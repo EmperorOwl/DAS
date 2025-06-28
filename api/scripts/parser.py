@@ -9,7 +9,7 @@ import sympy as sp
 from sympy.parsing import sympy_parser
 from tokenize import TokenError
 
-from scripts.utils import Func, Limit
+from scripts.utils import Func, Limit, BANNED
 
 
 class ParsingError(ValueError):
@@ -24,20 +24,30 @@ def _parse(s: str,
     If the string is an equation, then a SymPy relational object is returned.
     Otherwise, a SymPy expression object is returned.
     """
-    # Check for banned or invalid words
-    BANNED = ['_', 'import', 'config', 'eval', 'py', 'echo', '!!!', '$']
-    for banned in BANNED:
-        if banned in s.lower():
+    # Blacklist
+    INAVLID = ['_', '$', '#', ';', '!!!']
+    for item in BANNED + INAVLID:
+        if item in s.lower():
             raise ParsingError(f"{s} is invalid")
-    # Check for correct syntax for absolute value
+    # Latex
+    if '\\' in s:
+        raise ParsingError("Latex input is not accepted")
+    # Absolute value
     if '|' in s:
-        raise ParsingError(f"Please use abs(x) instead of |x|")
-    # Check for correct syntax for brackets
+        raise ParsingError("Please use abs(x) instead of |x|")
+    # Power
+    if 'squared' in s.lower():
+        raise ParsingError("Please use ^2 instead of squared")
+    # Square root
+    if '√' in s or 'square root' in s.lower():
+        raise ParsingError("Please use sqrt(x) or root(x, 2) "
+                           "instead of √x or square root x")
+    # Brackets
     if '{' in s or '}' in s:
         raise ParsingError(f"Please use () instead of {{}}")
     if '[' in s or ']' in s:
         raise ParsingError(f"Please use () instead of []")
-    # Update local dict
+    # Local dict
     CONVERSIONS = {
         'e': sp.E,
         'π': sp.pi,
@@ -52,7 +62,7 @@ def _parse(s: str,
     if local_dict is None:
         local_dict = {}
     local_dict.update(CONVERSIONS)
-    # Perform some manual replacements
+    # Manual replacements
     REPLACEMENTS = {
         '⋅': '*',
         '×': '*',
@@ -74,7 +84,7 @@ def _parse(s: str,
     }
     for old, new in REPLACEMENTS.items():
         s = s.replace(old, new)
-    # Parse the string
+    # Parsing
     transformations = sympy_parser.T[:11]  # Skip rationalize
     try:
         with sp.evaluate(evaluate):  # Prevents 1=1 from evaluating to True
@@ -82,7 +92,13 @@ def _parse(s: str,
                                            local_dict=local_dict,
                                            transformations=transformations,
                                            evaluate=evaluate)
-    except (SyntaxError, AttributeError, TypeError, TokenError):
+    except TokenError:
+        raise ParsingError(f"{s} is probably missing a closing bracket")
+    except AttributeError:
+        if '.' in s:
+            raise ParsingError(f"Please use * instead of .")
+        raise ParsingError(f"{s} is invalid")
+    except (SyntaxError, TypeError):
         raise ParsingError(f"{s} is invalid")
 
 

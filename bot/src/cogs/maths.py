@@ -33,7 +33,8 @@ class Maths(commands.Cog):
         """ Evaluates an expression.
 
         :param itx: the Discord interaction
-        :param expression: the expression to evaluate, e.g. sin(90deg), cos(pi)
+        :param expression: the expression to evaluate, 
+            e.g. sin(90deg), cos(pi), sqrt(4), root(8, 3), abs(-1), mod(5, 2)
         """
         res = await send_request('/evaluate', {'expr': expression})
         out = (f"Expression: `{res['pretty']['expr']}`\n"
