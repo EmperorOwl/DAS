@@ -10,6 +10,16 @@ from sympy.parsing import sympy_parser
 from tokenize import TokenError
 
 from scripts.utils import Func, Limit, BANNED
+from scripts.utils.error_messages import (invalid_character,
+                                          invalid_input,
+                                          no_latex,
+                                          invalid_factorial,
+                                          invalid_syntax,
+                                          missing_closing_bracket,
+                                          only_one_argument,
+                                          invalid_log,
+                                          invalid_root,
+                                          invalid_mod)
 
 
 class ParsingError(ValueError):
@@ -24,34 +34,43 @@ def _parse(s: str,
     If the string is an equation, then a SymPy relational object is returned.
     Otherwise, a SymPy expression object is returned.
     """
+    # Invalid characters
+    INVALID = ['"', "#", "$", "&", "'", ":", ";", "?", "@", "_", "`", "~"]
+    for char in INVALID:
+        if char in s:
+            raise ParsingError(invalid_character(char))
     # Blacklist
-    INAVLID = ['_', '$', '#', ';', '!!!']
-    for item in BANNED + INAVLID:
-        if item in s.lower():
-            raise ParsingError(f"{s} is invalid")
+    for banned in BANNED:
+        if banned in s.lower():
+            raise ParsingError(invalid_input(s))
     # Latex
     if '\\' in s:
-        raise ParsingError("Latex input is not accepted")
+        raise ParsingError(no_latex())
+    # Factorial
+    if "!!!" in s:
+        raise ParsingError(invalid_factorial())
     # Absolute value
     if '|' in s:
-        raise ParsingError("Please use abs(x) instead of |x|")
+        raise ParsingError(invalid_syntax("abs(x)", "|x|"))
     # Power
     for i, digit in enumerate(['²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']):
         if digit in s:
-            raise ParsingError(f"Please use ^{i+2} instead of {digit}")
+            raise ParsingError(invalid_syntax(f"^{i+2}", digit))
     if 'squared' in s.lower():
-        raise ParsingError("Please use ^2 instead of squared")
+        raise ParsingError(invalid_syntax("^2", "squared"))
     if 'cubed' in s.lower():
-        raise ParsingError("Please use ^3 instead of cubed")
+        raise ParsingError(invalid_syntax("^3", "cubed"))
     # Square root
-    if '√' in s or 'square root' in s.lower():
-        raise ParsingError("Please use sqrt(x) or root(x, 2) "
-                           "instead of √x or square root x")
+    if '√' in s:
+        raise ParsingError(invalid_syntax("sqrt(x) or root(x, 2)", "√x"))
+    if 'square root' in s.lower():
+        raise ParsingError(invalid_syntax("sqrt(x) or root(x, 2)",
+                                          "square root x"))
     # Brackets
     if '{' in s or '}' in s:
-        raise ParsingError(f"Please use () instead of {{}}")
+        raise ParsingError(invalid_syntax("()", "{}"))
     if '[' in s or ']' in s:
-        raise ParsingError(f"Please use () instead of []")
+        raise ParsingError(invalid_syntax("()", "[]"))
     # Local dict
     CONVERSIONS = {
         'e': sp.E,
@@ -98,19 +117,31 @@ def _parse(s: str,
                                            transformations=transformations,
                                            evaluate=evaluate)
     except TokenError:
-        raise ParsingError(f"{s} is probably missing a closing bracket")
-    except AttributeError:
+        raise ParsingError(missing_closing_bracket(s))
+    except AttributeError as error:
         if '.' in s:
-            raise ParsingError(f"Please use * instead of .")
-        raise ParsingError(f"{s} is invalid")
-    except TypeError:
-        if 'root' in s.lower():
-            raise ParsingError("root() requires 2 arguments\n"
-                               "root(n, k) returns the kth root of n\n"
-                               "e.g. root(8, 3) returns the cube root of 8")
-        raise ParsingError(f"{s} is invalid")
+            raise ParsingError(invalid_syntax("*", "."))
+        raise ParsingError(invalid_input(s))
+    except TypeError as error:
+        if 'root' in str(error):
+            raise ParsingError(invalid_root())
+        if 'Mod' in str(error):
+            raise ParsingError(invalid_mod())
+        if 'log' in str(error):
+            raise ParsingError(invalid_log())
+        # Check for one-argument functions
+        # (check in reverse order to avoid substring matches)
+        one_arg_funcs = ['asinh', 'acosh', 'atanh', 'acoth', 'asech', 'acsch',
+                         'sinh', 'cosh', 'tanh', 'coth', 'sech', 'csch',
+                         'asin', 'acos', 'atan', 'acot', 'asec', 'acsc',
+                         'cbrt', 'sqrt', 'exp', 'abs',
+                         'sin', 'cos', 'tan', 'cot', 'sec', 'csc']
+        for func in one_arg_funcs:
+            if func in str(error):
+                raise ParsingError(only_one_argument(func))
+        raise ParsingError(invalid_input(s))
     except SyntaxError:
-        raise ParsingError(f"{s} is invalid")
+        raise ParsingError(invalid_input(s))
 
 
 def parse_expr(s: str,
