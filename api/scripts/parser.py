@@ -123,11 +123,11 @@ def _parse(s: str,
             raise ParsingError(invalid_syntax("*", "."))
         raise ParsingError(invalid_input(s))
     except TypeError as error:
-        if 'root' in str(error):
+        if str(error).startswith('root'):
             raise ParsingError(invalid_root())
-        if 'Mod' in str(error):
+        if str(error).startswith('Mod'):
             raise ParsingError(invalid_mod())
-        if 'log' in str(error):
+        if str(error).startswith('log'):
             raise ParsingError(invalid_log())
         # Check for one-argument functions
         # (check in reverse order to avoid substring matches)
@@ -137,7 +137,7 @@ def _parse(s: str,
                          'cbrt', 'sqrt', 'exp', 'abs',
                          'sin', 'cos', 'tan', 'cot', 'sec', 'csc']
         for func in one_arg_funcs:
-            if func in str(error):
+            if str(error).startswith(func):
                 raise ParsingError(only_one_argument(func))
         raise ParsingError(invalid_input(s))
     except SyntaxError:
