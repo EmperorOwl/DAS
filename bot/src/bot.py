@@ -1,4 +1,5 @@
 """ Code for the bot. """
+import logging
 import os
 import aiohttp
 import topgg
@@ -9,8 +10,12 @@ from src.api import init_session
 from src.config import IS_PRODUCTION, BOT_TOKEN, TOPGG_TOKEN, COGS_DIR
 from src.utils import pretty_uptime
 
+log = logging.getLogger(__name__)
 
-class DAS(commands.AutoShardedBot if IS_PRODUCTION else commands.Bot):  # type: ignore
+BotBase = commands.AutoShardedBot if IS_PRODUCTION else commands.Bot
+
+
+class DAS(BotBase):  # type: ignore
     """ Represents the bot DAS. """
     ERR_COG = 'Error'
 
@@ -29,6 +34,7 @@ class DAS(commands.AutoShardedBot if IS_PRODUCTION else commands.Bot):  # type: 
 
     async def setup_hook(self) -> None:
         """ Enables asynchronous setup tasks to be run. """
+        # Set up shared HTTP session
         self.http_session = aiohttp.ClientSession(
             timeout=aiohttp.ClientTimeout(total=30),
         )
@@ -49,19 +55,20 @@ class DAS(commands.AutoShardedBot if IS_PRODUCTION else commands.Bot):  # type: 
             )
 
     async def on_ready(self) -> None:
-        """ Prints a message to indicate the bot is online. """
+        """ Logs a message to indicate the bot is online. """
         self.start_time = discord.utils.utcnow()
-        print(f"Logged in as {self.user.name} - {self.user.id} - "
-              f"{self.start_time.strftime('%H:%M')}")
+        log.info("Logged in as %s (%s) - %s - %s",
+                 self.user.name, BotBase.__name__, self.user.id,
+                 self.start_time.strftime('%H:%M'))
         # Attach the error handler to the bot
         self.tree.on_error = self.get_cog(self.ERR_COG).on_app_command_error
 
     async def on_autopost_success(self) -> None:
-        """ Prints a message to indicate bot has posted guild count. """
+        """ Logs a message to indicate bot has posted guild count. """
         if not self.topgg_client:
             raise ValueError("Topgg client is not set")
-        print(f"Posted server count {self.topgg_client.guild_count} guilds.")
-        print(f"Posted shard count {self.shard_count} shards.")
+        log.info("Posted server count %s guilds.", self.topgg_client.guild_count)
+        log.info("Posted shard count %s shards.", self.shard_count)
 
     def get_uptime(self) -> str:
         """ Returns the time the bot has been up. """
@@ -80,4 +87,5 @@ class DAS(commands.AutoShardedBot if IS_PRODUCTION else commands.Bot):  # type: 
         """ Starts the bot. """
         if not BOT_TOKEN:
             raise ValueError("BOT_TOKEN is not set")
-        super().run(BOT_TOKEN)
+        # root_logger=True so src.* loggers (not just discord.*) are visible.
+        super().run(BOT_TOKEN, root_logger=True)
