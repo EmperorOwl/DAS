@@ -53,8 +53,20 @@ func NewWorker() (*Worker, error) {
 	return &Worker{cmd: cmd, stdin: stdin, stdout: stdout, dead: false}, nil
 }
 
+// TryAcquire attempts to lock an idle, healthy worker without blocking.
+// The caller must invoke SendRequest, which releases the lock when done.
+func (w *Worker) TryAcquire() bool {
+	if !w.mu.TryLock() {
+		return false
+	}
+	if w.dead {
+		w.mu.Unlock()
+		return false
+	}
+	return true
+}
+
 func (w *Worker) SendRequest(req interface{}, t time.Duration) ([]byte, error) {
-	w.mu.Lock()
 	defer w.mu.Unlock()
 	if w.dead {
 		return nil, fmt.Errorf("worker is dead")
@@ -89,6 +101,10 @@ func (w *Worker) SendRequest(req interface{}, t time.Duration) ([]byte, error) {
 	case <-time.After(t):
 		w.cmd.Process.Kill()
 		w.dead = true
+		go func() {
+			w.cmd.Wait()
+			<-ch
+		}()
 		return nil, fmt.Errorf("worker timed out and was killed")
 	}
 }

@@ -26,7 +26,10 @@ func HandleOperation(operation string, timeout time.Duration) gin.HandlerFunc {
 		// Parse the request
 		var args Request
 		if err := c.ShouldBindJSON(&args); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{
+				"name":    "BadRequest",
+				"message": err.Error(),
+			})
 			return
 		}
 		req := map[string]interface{}{
@@ -44,9 +47,9 @@ func HandleOperation(operation string, timeout time.Duration) gin.HandlerFunc {
 		resp, err := worker.SendRequest(req, timeout)
 		if err != nil {
 			if err.Error() == "worker timed out and was killed" {
-				errMsg := fmt.Sprintf("Exceeded time limit of %v seconds",
-					timeout)
-				c.JSON(http.StatusRequestEntityTooLarge, gin.H{"error": errMsg})
+				errMsg := fmt.Sprintf("Exceeded time limit of %.1f seconds",
+					timeout.Seconds())
+				c.JSON(http.StatusGatewayTimeout, gin.H{"error": errMsg})
 				return
 			}
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

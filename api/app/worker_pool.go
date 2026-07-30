@@ -65,20 +65,21 @@ func (p *WorkerPool) periodicHealthCheck() {
 func (p *WorkerPool) GetWorker() *Worker {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	for i := 0; i < len(p.workers); i++ {
-		w := p.workers[p.next]
+	n := len(p.workers)
+	for i := 0; i < n; i++ {
+		idx := (p.next + i) % n
+		w := p.workers[idx]
 		if w.IsDead() {
-			// Trigger non-blocking replacement of the dead worker
-			// and skip to next worker to check if it is healthy
 			select {
-			case p.replaceChan <- p.next:
+			case p.replaceChan <- idx:
 			default:
 			}
-			p.next = (p.next + 1) % len(p.workers)
 			continue
 		}
-		p.next = (p.next + 1) % len(p.workers)
-		return w
+		if w.TryAcquire() {
+			p.next = (idx + 1) % n
+			return w
+		}
 	}
-	return nil // No healthy workers, fail fast
+	return nil
 }

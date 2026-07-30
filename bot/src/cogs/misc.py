@@ -36,7 +36,6 @@ class Misc(commands.Cog):
                     `factor` - Factor an expression!
                     `simplify` - Simplify an expression!
                     `calculate` - Evaluate an expression!
-                    `average` - Find the average of a list of numbers!
                     `atr` - Toggle Automatic TeX Recognition (ATR)!
                     """
                 ),

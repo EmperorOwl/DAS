@@ -1,9 +1,11 @@
 """ Code for the bot. """
 import os
+import aiohttp
 import topgg
 import discord
 from discord.ext import commands
 
+from src.api import init_session
 from src.config import IS_PRODUCTION, BOT_TOKEN, TOPGG_TOKEN, COGS_DIR
 from src.utils import pretty_uptime
 
@@ -23,9 +25,14 @@ class DAS(commands.AutoShardedBot if IS_PRODUCTION else commands.Bot):  # type: 
         # Define some attributes to be initialised later.
         self.topgg_client = None
         self.start_time = None
+        self.http_session = None
 
     async def setup_hook(self) -> None:
         """ Enables asynchronous setup tasks to be run. """
+        self.http_session = aiohttp.ClientSession(
+            timeout=aiohttp.ClientTimeout(total=30),
+        )
+        init_session(self.http_session)
         # Dynamically load all the cogs.
         for file in os.listdir(COGS_DIR):
             if not file.startswith('__'):
@@ -62,6 +69,12 @@ class DAS(commands.AutoShardedBot if IS_PRODUCTION else commands.Bot):  # type: 
             raise ValueError("Bot has not started")
         uptime = (discord.utils.utcnow() - self.start_time).total_seconds()
         return pretty_uptime(uptime)
+
+    async def close(self) -> None:
+        """ Closes the shared HTTP session and shuts down the bot. """
+        if self.http_session:
+            await self.http_session.close()
+        await super().close()
 
     def run(self) -> None:
         """ Starts the bot. """
