@@ -48,34 +48,40 @@ class ATR(commands.Cog):
         """ Listens for message edits that may trigger ATR. """
         await self.manage_atr(after)
 
+    ATR_MAX_CHARS = 500
+
     async def manage_atr(self, msg: Message) -> None:
         """ Checks for and performs ATR if enabled. """
         text = msg.content
-        if not msg.author.bot and re.search(r'\$(.+)\$', text):
-            settings = read_data_from_json_file(SETTINGS_FILE)
-            try:
-                if msg.guild and settings[str(msg.guild.id)]['atr']:
-                    try:
-                        res = await send_request('/display', {'text': text})
-                    except Exception as error:
-                        await TexRenderFail(msg, error).send()
-                    else:
-                        await TexRenderSuccess(msg, res['image']).send()
-                else:
-                    pass  # As server has disabled ATR
-            except KeyError:
-                pass  # As server has never enabled ATR
-            except discord.Forbidden as error:
-                # Triggers if the permission "Read Message History" is missing
+        if (msg.author.bot
+                or len(text) > self.ATR_MAX_CHARS
+                or not re.search(r'\$(.+)\$', text)):
+            return
+        settings = read_data_from_json_file(SETTINGS_FILE)
+        try:
+            if msg.guild and settings[str(msg.guild.id)]['atr']:
                 try:
-                    errMsg = (f"🚓 Oh no! I am missing some permissions, "
-                              f"please re-invite me to the server.\n"
-                              f"Otherwise, if you would like to disable "
-                              f"Automatic TeX Recognition, type `/atr`.\n"
-                              f"```{error}```")
-                    await msg.channel.send(errMsg)
-                except discord.Forbidden:
-                    pass  # Don't have permission to send messages
+                    # Render the full message (not just $...$ segments).
+                    res = await send_request('/display', {'text': text})
+                except Exception as error:
+                    await TexRenderFail(msg, error).send()
+                else:
+                    await TexRenderSuccess(msg, res['image']).send()
+            else:
+                pass  # As server has disabled ATR
+        except KeyError:
+            pass  # As server has never enabled ATR
+        except discord.Forbidden as error:
+            # Triggers if the permission "Read Message History" is missing
+            try:
+                errMsg = (f"🚓 Oh no! I am missing some permissions, "
+                          f"please re-invite me to the server.\n"
+                          f"Otherwise, if you would like to disable "
+                          f"Automatic TeX Recognition, type `/atr`.\n"
+                          f"```{error}```")
+                await msg.channel.send(errMsg)
+            except discord.Forbidden:
+                pass  # Don't have permission to send messages
 
 
 async def setup(bot: commands.Bot) -> None:

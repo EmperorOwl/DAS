@@ -47,7 +47,7 @@ class Maths(commands.Cog):
 
     @app_commands.command()
     @allow_anywhere
-    async def expand(self, itx: Interaction, expression: str) -> None:
+    async def expand(self, itx: Interaction, expression: CharLim50) -> None:
         """ Expands an expression.
 
         :param itx: the Discord interaction

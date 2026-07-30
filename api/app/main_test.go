@@ -105,7 +105,7 @@ func TestInvalidInput(t *testing.T) {
 			name:           "Evaluate timeout expression",
 			endpoint:       "/evaluate",
 			args:           map[string]interface{}{"expr": "99^99999999!"},
-			expectedStatus: http.StatusRequestEntityTooLarge,
+			expectedStatus: http.StatusGatewayTimeout,
 		},
 		{
 			name:     "Invalid syntax",

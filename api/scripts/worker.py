@@ -7,6 +7,7 @@ from scripts.calculus import *
 from scripts.graphs import *
 from scripts.solvers import *
 from scripts.misc import *
+from scripts.utils import Error
 
 
 def main():
@@ -22,9 +23,12 @@ def main():
             if callable(func):
                 output = func(args).__dict__
             else:
-                output = {"error": f"Unknown operation: {operation}"}
+                output = Error(
+                    name="UnknownOperation",
+                    message=f"Unknown operation: {operation}",
+                ).__dict__
         except Exception as e:
-            output = {"error": str(e)}
+            output = Error(name=type(e).__name__, message=str(e)).__dict__
         print(json.dumps(output), flush=True)
 
 
