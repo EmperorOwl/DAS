@@ -49,7 +49,9 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v6
         with:
-          go-version: '1.21'
+          # govulncheck@latest currently requires a newer toolchain than the
+          # project's Go 1.21; scanning with a newer Go is fine.
+          go-version: '1.25'
 
       - name: Run govulncheck
         run: |

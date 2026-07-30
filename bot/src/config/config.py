@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
-IS_PRODUCTION = os.getenv('IS_PRODUCTION')
+IS_PRODUCTION = os.getenv('IS_PRODUCTION', '').lower() in ('1', 'true', 'yes')
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 TOPGG_TOKEN = os.getenv('TOPGG_TOKEN')
 LOG_CHANNEL = os.getenv('LOG_CHANNEL')
